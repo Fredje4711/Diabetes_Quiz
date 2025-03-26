@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diabetes Quiz (50 Vragen)</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0; /* Geen standaard marge */
-            padding: 0;
+            margin: 0;
+            padding: 20px; /* Behoud padding voor ruimte aan randen */
             line-height: 1.6;
             background-color: #f9f9f9;
             color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
 
         #quiz-container {
@@ -23,15 +21,15 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             max-width: 700px;
-            width: 90%; /* Responsive breedte */
-            margin: 20px auto; /* Centered */
-            flex-grow: 1; /* Neemt beschikbare ruimte */
+            width: 90%;
+            /* margin: 20px auto; OUDE MARGE */
+            margin: 20px auto 5px auto; /* NIEUW: Kleinere ondermarge (pas 5px aan naar wens) */
         }
 
         h1 {
             color: #23a9e4;
             text-align: center;
-            margin-top: 0; /* Minder ruimte bovenaan */
+            margin-top: 0;
             margin-bottom: 25px;
         }
 
@@ -58,7 +56,7 @@
             text-align: left;
             font-size: 1em;
             transition: background-color 0.3s, border-color 0.3s;
-            box-sizing: border-box; /* Zorgt dat padding binnen de breedte valt */
+            box-sizing: border-box;
         }
 
         #answers button:hover:not([disabled]) {
@@ -72,19 +70,18 @@
         }
 
         #answers button.correct {
-            background-color: #d4edda; /* Groen */
+            background-color: #d4edda;
             border-color: #c3e6cb;
             color: #155724;
             font-weight: bold;
         }
 
         #answers button.incorrect {
-            background-color: #f8d7da; /* Rood */
+            background-color: #f8d7da;
             border-color: #f5c6cb;
             color: #721c24;
         }
 
-        /* Styling voor de gekozen incorrecte knop */
         #answers button.selected-incorrect {
              border-width: 2px;
         }
@@ -93,7 +90,7 @@
         #feedback {
             margin-top: 15px;
             font-weight: bold;
-            min-height: 1.2em; /* Placeholder for feedback text */
+            min-height: 1.2em;
             padding: 10px;
             border-radius: 5px;
             text-align: center;
@@ -151,12 +148,12 @@
 
         footer {
             text-align: center;
-            margin-top: 0px;
-            padding: 15px; /* Padding rondom */
+            /* margin-top: 30px; OUDE MARGE */
+            margin-top: 1px; /* NIEUW: Kleinere bovenmarge (pas 10px aan naar wens) */
+            padding: 15px;
             border-top: 1px solid #eee;
             color: #666;
             font-size: 0.9em;
-             width: 100%; /* Zodat het onderaan blijft */
              box-sizing: border-box;
         }
 
@@ -164,24 +161,31 @@
             margin: 5px 0;
         }
 
-        footer a {
+         footer a {
             color: #23a9e4;
             text-decoration: none;
             font-weight: bold;
+            display: inline-flex;
+            align-items: center;
         }
 
          footer a:hover {
              text-decoration: underline;
          }
 
-        footer img, footer span { /* Stijl voor zowel img als emoji span */
-            width: 16px;
-            height: 16px;
-            vertical-align: middle;
+        footer span {
             margin-right: 4px;
-            display: inline-block; /* Zorgt voor correcte uitlijning */
+            color: #23a9e4;
+            line-height: 1;
+        }
+
+        footer img {
+             width: 16px;
+             height: 16px;
+             margin-right: 4px;
         }
     </style>
+
 </head>
 <body>
 
