@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Diabetes Q&A</title>
+       <style>
+body {
+    font-family: Arial, sans-serif;
+    /* margin: 20px; */ /* Vervang deze algemene margin */
+    margin: 0 20px 20px 20px; /* Boven 0, rest 20px */
+    /* OF voeg alleen margin-top: 0; toe als je de rest wilt behouden */
+    /* margin-top: 0; */
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h1 {
+    color: #23a9e4;
+    margin-bottom: -15px;
+    margin-top: 10px; /* Begin hiermee, pas aan naar wens */
+}
+        /* Stijl voor ALLE h2 (sectie titels), behalve die in #toc */
+        section > h2 {
+            color: #23a9e4;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #e6f7ff;
+            border-bottom: 1px solid #23a9e4;
+            margin-top: 20px;
+            margin-bottom: 0; /* Verkleint ruimte onder titel */
+        }
+
+        .content {
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none; /* Standaard verborgen */
+        }
+
+        .content p:first-child {
+            margin-top: 5px; /* Kleinere marge boven eerste paragraaf in content */
+        }
+
+        #toc {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border: 1px solid #23a9e4;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        /* Stijl specifiek voor de h2 IN de inhoudsopgave (#toc) */
+        #toc h2 {
+             margin: 0;
+             padding: 0;
+             background-color: transparent;
+             border-bottom: none;
+             cursor: default;
+             margin-bottom: 0.5em;
+             margin-top: 0; /* Zekerheidshalve */
+             color: #333; /* Standaard tekstkleur voor de titel zelf */
+             font-size: 1.2em; /* Iets groter misschien */
+             font-weight: bold;
+        }
+
+        /* Optioneel: Span voor speciale styling IN de toc h2, als je die gebruikt */
+        /* #toc h2 span { */
+            /* styles... */
+        /* } */
+
+
+        #toc ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+            margin-bottom: 0; /* Geen extra marge onder de lijst */
+        }
+
+        #toc li {
+            margin-bottom: 8px;
+        }
+
+        #toc a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        #search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #search-input {
+            padding: 8px;
+            width: 70%;
+            border: 1px solid #23a9e4;
+            border-radius: 4px;
+        }
+
+        #search-button {
+            padding: 8px 15px;
+            background-color: #23a9e4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .highlight {
+            background-color: #8fd3f1; /* Jouw gekozen kleur */
+            /* background-color: yellow; Alternatief */
+        }
+
+        #noResults {
+            display: none;
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* Secties zijn standaard zichtbaar, JS verbergt ze initieel */
+        section {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>100 Diabetes Q&A</h1>
+    <p>Uitgebreide vraag en antwoord gids</p>
+	    <div id="search-container">
+        <input type="text" id="search-input" placeholder="Enkel één kernwoord of trefwoord...">
+        <button id="search-button" onclick="performSearch()">Zoeken</button>
+        <div id="noResults" style="display: none; color: red; text-align: center; margin-top: 10px;">Geen resultaten gevonden voor dit woord.</div>
+        <!-- NIEUWE MELDING HIERONDER -->
+        <div id="multiWordWarning" style="display: none; color: orange; text-align: center; margin-top: 10px;">Gebruik bij voorkeur één kernwoord voor het beste resultaat.</div>
+    </div>
+
+    <div id="toc">
+        <h2>Inhoudsopgave</h2>
+        <ul>
+            <!-- Correcte onclick voor inhoudsopgave links -->
+            <li><a href="#algemeen" onclick="showSectionAndPreventDefault(event, 'algemeen')">Algemene informatie over diabetes</a></li>
+            <li><a href="#typen" onclick="showSectionAndPreventDefault(event, 'typen')">Typen diabetes</a></li>
+            <li><a href="#oorzaken" onclick="showSectionAndPreventDefault(event, 'oorzaken')">Oorzaken en risicofactoren</a></li>
+            <li><a href="#symptomen" onclick="showSectionAndPreventDefault(event, 'symptomen')">Symptomen en diagnose</a></li>
+            <li><a href="#behandeling" onclick="showSectionAndPreventDefault(event, 'behandeling')">Behandeling en medicatie</a></li>
+            <li><a href="#complicaties" onclick="showSectionAndPreventDefault(event, 'complicaties')">Complicaties</a></li>
+            <li><a href="#leefstijl" onclick="showSectionAndPreventDefault(event, 'leefstijl')">Leefstijl en dieet</a></li>
+            <li><a href="#zelfmanagement" onclick="showSectionAndPreventDefault(event, 'zelfmanagement')">Zelfmanagement en monitoring</a></li>
+            <li><a href="#psychosociaal" onclick="showSectionAndPreventDefault(event, 'psychosociaal')">Psychosociale aspecten</a></li>
+            <li><a href="#speciaal" onclick="showSectionAndPreventDefault(event, 'speciaal')">Speciale populaties</a></li>
+            <li><a href="#preventie" onclick="showSectionAndPreventDefault(event, 'preventie')">Preventie</a></li>
+            <li><a href="#onderzoek" onclick="showSectionAndPreventDefault(event, 'onderzoek')">Onderzoek en innovatie</a></li>
+            <li><a href="#overig" onclick="showSectionAndPreventDefault(event, 'overig')">Overige vragen</a></li>
+        </ul>
+    </div>
+
+    <!-- Secties (verkorte inhoud voor leesbaarheid) -->
+    <section id="algemeen">
+        <h2 onclick="toggleSection('algemeen-content')">Algemene informatie over diabetes</h2>
+        <div id="algemeen-content" class="content">
+             <p><b>Vraag 1: Wat is diabetes?</b><br>
+            Diabetes is een ziekte waarbij het lichaam de bloedsuiker niet meer in evenwicht kan houden, waardoor er te veel glucose in het bloed zit. Het wordt ook wel suikerziekte genoemd en komt doordat het lichaam te weinig van het hormoon insuline heeft of doordat het lichaam niet meer goed reageert op insuline.</p>
+             <p><b>Vraag 2: Hoeveel mensen in Nederland hebben diabetes?</b><br>
+            Ruim 1,2 miljoen mensen in Nederland hebben diabetes. De meest voorkomende vorm is diabetes type 2 met ongeveer 1,1 miljoen patiënten, terwijl er ruim 100.000 mensen zijn met diabetes type 1. Daarnaast zijn er ook andere, minder voorkomende vormen van diabetes.</p>
+             <p><b>Vraag 3: Wat is het verschil tussen diabetes type 1 en type 2?</b><br>
+            Bij diabetes type 1 maakt het lichaam zelf geen insuline meer aan doordat het afweersysteem de cellen die insuline aanmaken heeft vernietigd. Bij diabetes type 2 maakt het lichaam wel insuline aan, maar te weinig, of het lichaam reageert er niet meer goed op (insulineresistentie). Type 1 begint meestal op jonge leeftijd, terwijl type 2 vaker voorkomt bij oudere mensen en mensen met overgewicht.</p>
+             <p><b>Vraag 4: Wat is insuline en welke rol speelt het bij diabetes?</b><br>
+            Insuline is een hormoon dat wordt aangemaakt in de alvleesklier en dat ervoor zorgt dat glucose (suiker) uit het bloed wordt opgenomen in de lichaamscellen, waar het wordt gebruikt als energiebron. Bij diabetes is er een probleem met de productie van insuline of met de manier waarop het lichaam reageert op insuline, waardoor de bloedsuikerspiegel te hoog wordt.</p>
+             <p><b>Vraag 5: Kan diabetes worden genezen?</b><br>
+            Op dit moment kan diabetes niet worden genezen. Diabetes type 1 is een auto-immuunziekte waarbij levenslange behandeling met insuline nodig is. Bij diabetes type 2 kunnen sommige mensen hun symptomen onder controle krijgen door middel van leefstijlveranderingen zoals gezonde voeding, voldoende beweging en gewichtsverlies, maar de onderliggende aandoening blijft aanwezig.</p>
+             <p><b>Vraag 6: Is diabetes erfelijk?</b><br>
+            Er is een erfelijke component bij zowel diabetes type 1 als type 2. Bij diabetes type 1 speelt erfelijke aanleg een rol, maar ook omgevingsfactoren zijn belangrijk. Bij diabetes type 2 is de erfelijke component sterker: als een van je ouders diabetes type 2 heeft, is de kans groter dat je het zelf ook krijgt. Toch spelen ook hier leefstijlfactoren zoals voeding en beweging een belangrijke rol.</p>
+             <p><b>Vraag 7: Wat is prediabetes?</b><br>
+            Prediabetes is een toestand waarbij de bloedsuikerspiegel hoger is dan normaal, maar nog niet hoog genoeg om als diabetes te worden gediagnosticeerd. Het is een waarschuwingssignaal dat iemand risico loopt om diabetes type 2 te ontwikkelen. Met leefstijlveranderingen zoals gezonde voeding, meer beweging en gewichtsverlies kan de ontwikkeling van diabetes type 2 vaak worden vertraagd of voorkomen.</p>
+             <p><b>Vraag 8: Wat is het verband tussen diabetes en overgewicht?</b><br>
+            Overgewicht, vooral rond de buik, is een belangrijke risicofactor voor het ontwikkelen van diabetes type 2. Vetcellen, vooral die rond de buik, maken het lichaam minder gevoelig voor insuline (insulineresistentie). Hierdoor moet de alvleesklier harder werken om voldoende insuline te produceren, en kan deze op den duur uitgeput raken, wat leidt tot diabetes type 2.</p>
+        </div>
+    </section>
+
+    <section id="typen">
+        <h2 onclick="toggleSection('typen-content')">Typen diabetes</h2>
+        <div id="typen-content" class="content">
+             <p><b>Vraag 9: Wat zijn de verschillende typen diabetes?</b><br>
+            De meest voorkomende typen diabetes zijn type 1 en type 2. Daarnaast bestaat er zwangerschapsdiabetes, die tijdens de zwangerschap optreedt. Er zijn ook zeldzamere vormen zoals MODY (Maturity Onset Diabetes of the Young), LADA (Latent Autoimmune Diabetes in Adults) en secundaire diabetes, die ontstaat als gevolg van andere aandoeningen of medicijngebruik.</p>
+             <p><b>Vraag 10: Wat is diabetes type 1?</b><br>
+            Diabetes type 1 is een auto-immuunziekte waarbij het afweersysteem van het lichaam de insuline producerende cellen (bètacellen) in de alvleesklier aanvalt en vernietigt. Hierdoor maakt het lichaam zelf geen of nauwelijks insuline meer aan. Mensen met diabetes type 1 moeten daarom insuline inspuiten of een insulinepomp dragen om te overleven.</p>
+             <p><b>Vraag 11: Wat is diabetes type 2?</b><br>
+            Diabetes type 2 is een aandoening waarbij het lichaam niet genoeg insuline produceert of waarbij de cellen niet goed reageren op insuline (insulineresistentie). Het begint vaak met insulineresistentie, waardoor de alvleesklier meer insuline moet produceren. Op den duur kan de alvleesklier deze verhoogde vraag niet meer aan, waardoor de bloedsuikerspiegel stijgt.</p>
+             <p><b>Vraag 12: Wat is zwangerschapsdiabetes?</b><br>
+            Zwangerschapsdiabetes is een vorm van diabetes die tijdens de zwangerschap ontstaat en meestal na de bevalling weer verdwijnt. Het wordt veroorzaakt door hormonen die tijdens de zwangerschap worden aangemaakt en die de werking van insuline kunnen blokkeren. Vrouwen die zwangerschapsdiabetes hebben gehad, hebben een verhoogd risico op het ontwikkelen van diabetes type 2 later in het leven.</p>
+             <p><b>Vraag 13: Wat is MODY (Maturity Onset Diabetes of the Young)?</b><br>
+            MODY is een zeldzame vorm van diabetes die wordt veroorzaakt door een genetische mutatie en vaak op jonge leeftijd (vóór het 25e levensjaar) begint. Er zijn verschillende subtypes van MODY, afhankelijk van welk gen is aangedaan. MODY wordt vaak verward met diabetes type 1 of 2, maar vereist soms een andere behandeling.</p>
+             <p><b>Vraag 14: Wat is LADA (Latent Autoimmune Diabetes in Adults)?</b><br>
+            LADA is een vorm van diabetes die kenmerken heeft van zowel type 1 als type 2. Het is een auto-immuunziekte zoals type 1, maar ontwikkelt zich langzamer en begint meestal op volwassen leeftijd, zoals type 2. Mensen met LADA produceren aanvankelijk nog wat insuline, maar hebben uiteindelijk insuline-injecties nodig omdat hun eigen insulineproductie afneemt.</p>
+             <p><b>Vraag 15: Kan iemand zowel diabetes type 1 als type 2 hebben?</b><br>
+            Het is zeldzaam, maar het is mogelijk dat iemand kenmerken van zowel diabetes type 1 als type 2 heeft. Dit wordt soms "dubbele diabetes" genoemd. Het kan voorkomen bij mensen die diabetes type 1 hebben en later insulineresistentie ontwikkelen, bijvoorbeeld door overgewicht. De behandeling moet dan gericht zijn op beide aspecten van de aandoening.</p>
+             <p><b>Vraag 16: Wat is het verschil tussen diabetes en suikerziekte?</b><br>
+            Er is geen verschil; suikerziekte is een oudere, meer informele term voor diabetes mellitus. De term "suikerziekte" verwijst naar het feit dat mensen met onbehandelde diabetes een verhoogde hoeveelheid suiker (glucose) in hun bloed en urine hebben. Tegenwoordig wordt de term "diabetes" meer gebruikt in medische context.</p>
+        </div>
+    </section>
+
+    <section id="oorzaken">
+        <h2 onclick="toggleSection('oorzaken-content')">Oorzaken en risicofactoren</h2>
+        <div id="oorzaken-content" class="content">
+             <p><b>Vraag 17: Wat veroorzaakt diabetes type 1?</b><br>
+            Diabetes type 1 wordt veroorzaakt door een auto-immuunreactie waarbij het afweersysteem van het lichaam de insulineproducerende cellen in de alvleesklier aanvalt en vernietigt. De exacte oorzaak van deze auto-immuunreactie is niet volledig bekend, maar zowel genetische factoren als omgevingsfactoren (zoals bepaalde virusinfecties) spelen een rol.</p>
+             <p><b>Vraag 18: Wat veroorzaakt diabetes type 2?</b><br>
+            Diabetes type 2 wordt veroorzaakt door een combinatie van genetische aanleg en leefstijlfactoren. De belangrijkste risicofactoren zijn overgewicht, vooral rond de buik, onvoldoende lichaamsbeweging, ongezonde voeding en ouderdom. Deze factoren leiden tot insulineresistentie en een verminderde insulineproductie door de alvleesklier.</p>
+             <p><b>Vraag 19: Welke risicofactoren verhogen de kans op diabetes type 2?</b><br>
+            De belangrijkste risicofactoren voor diabetes type 2 zijn: overgewicht of obesitas, vooral buikvet; onvoldoende lichaamsbeweging; ongezonde voeding met veel verzadigde vetten en suikers; leeftijd (risico neemt toe na 45 jaar); familiegeschiedenis van diabetes; etniciteit (sommige bevolkingsgroepen hebben een hoger risico); en eerder doorgemaakte zwangerschapsdiabetes.</p>
+             <p><b>Vraag 20: Kan stress diabetes veroorzaken?</b><br>
+            Stress zelf veroorzaakt geen diabetes, maar kan wel een rol spelen bij het ontstaan of verergeren van de aandoening. Chronische stress kan leiden tot ongezonde gewoonten zoals slechte eetgewoonten, minder beweging en slaapproblemen, die het risico op diabetes type 2 verhogen. Bij mensen die al diabetes hebben, kan stress de bloedsuikerspiegel tijdelijk verhogen.</p>
+             <p><b>Vraag 21: Kan medicijngebruik diabetes veroorzaken?</b><br>
+            Ja, bepaalde medicijnen kunnen het risico op diabetes verhogen of tijdelijk de bloedsuikerspiegel beïnvloeden. Voorbeelden zijn corticosteroïden (zoals prednison), sommige antipsychotica, bepaalde middelen tegen hiv, sommige medicijnen tegen hoge bloeddruk en diuretica (plaspillen). Als je deze medicijnen gebruikt, is het belangrijk om regelmatig je bloedsuikerspiegel te laten controleren.</p>
+             <p><b>Vraag 22: Is er een verband tussen slaap en diabetes?</b><br>
+            Ja, er is een verband tussen slaapproblemen en diabetes. Chronisch slaaptekort en slechte slaapkwaliteit kunnen leiden tot insulineresistentie en een verhoogd risico op diabetes type 2. Omgekeerd kunnen mensen met diabetes vaker last hebben van slaapproblemen door symptomen zoals nachtelijk plassen of door complicaties zoals neuropathie (zenuwpijn).</p>
+             <p><b>Vraag 23: Welke rol speelt voeding bij het ontstaan van diabetes?</b><br>
+            Voeding speelt een belangrijke rol bij het ontstaan van diabetes type 2. Een dieet rijk aan bewerkte koolhydraten, suikers en verzadigde vetten kan leiden tot overgewicht en insulineresistentie. Daarentegen kan een voedingspatroon rijk aan vezels, groenten, fruit, volkoren producten en gezonde vetten het risico op diabetes type 2 verlagen, zelfs bij mensen met een genetische aanleg.</p>
+             <p><b>Vraag 24: Kan diabetes worden veroorzaakt door te veel suiker eten?</b><br>
+            Het eten van te veel suiker alleen veroorzaakt niet direct diabetes, maar kan wel bijdragen aan het ontstaan van diabetes type 2. Overmatige suikerconsumptie kan leiden tot overgewicht en obesitas, wat belangrijke risicofactoren zijn voor diabetes type 2. Bovendien kan een dieet rijk aan suiker de insulinegevoeligheid verminderen en de alvleesklier overbelasten.</p>
+        </div>
+    </section>
+
+    <section id="symptomen">
+        <h2 onclick="toggleSection('symptomen-content')">Symptomen en diagnose</h2>
+        <div id="symptomen-content" class="content">
+             <p><b>Vraag 25: Wat zijn de eerste symptomen van diabetes?</b><br>
+            De eerste symptomen van diabetes zijn vaak: veel dorst hebben, vaak moeten plassen (ook 's nachts), onverklaarbaar gewichtsverlies, vermoeidheid, wazig zien, trage wondgenezing en terugkerende infecties. Bij diabetes type 1 ontwikkelen deze symptomen zich vaak snel, terwijl ze bij diabetes type 2 geleidelijker kunnen ontstaan en soms jaren onopgemerkt blijven.</p>
+             <p><b>Vraag 26: Hoe wordt diabetes gediagnosticeerd?</b><br>
+            Diabetes wordt gediagnosticeerd door het meten van de bloedsuikerspiegel. Dit kan op verschillende manieren: via een nuchtere bloedsuikertest (na minstens 8 uur vasten), een willekeurige bloedsuikertest, een orale glucosetolerantietest of een HbA1c-test (die het gemiddelde bloedsuikergehalte over de afgelopen 2-3 maanden meet). De diagnose wordt gesteld als de waarden boven bepaalde drempels liggen.</p>
+             <p><b>Vraag 27: Wat is een hypo en hoe herken je die?</b><br>
+            Een hypo (hypoglykemie) is een te lage bloedsuikerspiegel, meestal onder de 3,5 mmol/l. Symptomen zijn onder andere zweten, trillen, duizeligheid, verwardheid, concentratieproblemen, honger, bleekheid, hoofdpijn en in ernstige gevallen bewustzijnsverlies. Een hypo kan optreden bij mensen met diabetes die insuline of bepaalde bloedsuikerverlagende medicijnen gebruiken, vooral als ze te weinig hebben gegeten of te veel hebben bewogen.</p>
+             <p><b>Vraag 28: Wat is een hyper en hoe herken je die?</b><br>
+            Een hyper (hyperglykemie) is een te hoge bloedsuikerspiegel. Symptomen zijn onder andere veel dorst, vaak plassen, vermoeidheid, wazig zien, droge mond en in ernstige gevallen misselijkheid, braken en buikpijn. Een hyper kan ontstaan door te veel eten, te weinig beweging, stress, ziekte of onvoldoende insuline of medicatie. Langdurige hyperglykemie kan leiden tot ernstige complicaties.</p>
+             <p><b>Vraag 29: Wat is het verschil tussen de symptomen van diabetes type 1 en type 2?</b><br>
+            Bij diabetes type 1 ontwikkelen de symptomen zich vaak snel en zijn ze duidelijker: veel dorst, vaak plassen, onverklaarbaar gewichtsverlies, vermoeidheid en soms misselijkheid en braken. Bij diabetes type 2 ontwikkelen de symptomen zich meestal geleidelijker en kunnen ze jarenlang mild of afwezig zijn. Sommige mensen met type 2 merken pas dat ze diabetes hebben als er complicaties optreden.</p>
+             <p><b>Vraag 30: Wat is de HbA1c-test en wat zegt deze over diabetes?</b><br>
+            De HbA1c-test (ook wel geglyceerd hemoglobine genoemd) meet het percentage van hemoglobine in het bloed dat suiker aan zich gebonden heeft. Deze test geeft een beeld van de gemiddelde bloedsuikerspiegel over de afgelopen 2-3 maanden. Een HbA1c-waarde van 48 mmol/mol (6,5%) of hoger wijst op diabetes. De test wordt gebruikt voor zowel diagnose als voor het monitoren van de behandeling.</p>
+             <p><b>Vraag 31: Kan diabetes symptoomloos zijn?</b><br>
+            Ja, vooral diabetes type 2 kan jarenlang symptoomloos zijn of slechts milde symptomen veroorzaken die gemakkelijk over het hoofd worden gezien. Daarom wordt diabetes type 2 soms pas ontdekt tijdens een routinecontrole of wanneer er complicaties optreden. Diabetes type 1 veroorzaakt meestal duidelijkere symptomen die zich relatief snel ontwikkelen.</p>
+             <p><b>Vraag 32: Wat zijn de waarschuwingssignalen van diabetes bij kinderen?</b><br>
+            Waarschuwingssignalen van diabetes (meestal type 1) bij kinderen zijn: veel dorst en vaak plassen, bedplassen bij een kind dat voorheen droog was, extreme honger, onverklaarbaar gewichtsverlies, vermoeidheid, prikkelbaarheid, gedragsveranderingen, wazig zien en gistinfecties (vooral bij meisjes). Deze symptomen kunnen zich snel ontwikkelen, soms binnen enkele weken.</p>
+        </div>
+    </section>
+
+    <section id="behandeling">
+        <h2 onclick="toggleSection('behandeling-content')">Behandeling en medicatie</h2>
+        <div id="behandeling-content" class="content">
+             <p><b>Vraag 33: Hoe wordt diabetes type 1 behandeld?</b><br>
+            Diabetes type 1 wordt behandeld met insulinetherapie, die levenslang nodig is. Dit kan via meerdere dagelijkse insuline-injecties of via een insulinepomp. Daarnaast is het belangrijk om de bloedsuikerspiegel regelmatig te controleren, gezond te eten met aandacht voor koolhydraten, regelmatig te bewegen en een gezond gewicht te behouden.</p>
+             <p><b>Vraag 34: Hoe wordt diabetes type 2 behandeld?</b><br>
+            De behandeling van diabetes type 2 begint vaak met leefstijlveranderingen zoals gezonde voeding, meer lichaamsbeweging en gewichtsverlies. Als dit niet voldoende is, worden orale medicijnen voorgeschreven die de bloedsuikerspiegel verlagen. In latere stadia kan insulinetherapie nodig zijn. Regelmatige controle van de bloedsuikerspiegel is belangrijk om de behandeling aan te passen.</p>
+             <p><b>Vraag 35: Welke medicijnen worden gebruikt bij de behandeling van diabetes type 2?</b><br>
+            Bij diabetes type 2 worden verschillende soorten medicijnen gebruikt, waaronder: metformine (eerste keuze, vermindert insulineresistentie); sulfonylureumderivaten (stimuleren insulineproductie); DPP-4-remmers (verbeteren insulineafgifte); GLP-1-receptoragonisten (vertragen maagontlediging, verminderen eetlust); SGLT2-remmers (verhogen glucoseuitscheiding via de nieren); en in sommige gevallen insuline.</p>
+             <p><b>Vraag 36: Wat is het verschil tussen kortwerkende en langwerkende insuline?</b><br>
+            Kortwerkende (of snelwerkende) insuline begint snel te werken (binnen 15 minuten tot een uur) en werkt 3-5 uur. Het wordt gebruikt om de bloedsuikerstijging na maaltijden tegen te gaan. Langwerkende insuline werkt geleidelijker, begint na 1-2 uur te werken en werkt 12-24 uur. Het zorgt voor een basisniveau van insuline gedurende de dag en nacht.</p>
+             <p><b>Vraag 37: Wat is een insulinepomp en voor wie is deze geschikt?</b><br>
+            Een insulinepomp is een klein apparaat dat continu kleine hoeveelheden snelwerkende insuline afgeeft via een canule onder de huid. De gebruiker kan extra insuline toedienen bij maaltijden. Insulinepompen zijn geschikt voor mensen met diabetes type 1 of type 2 die intensieve insulinetherapie nodig hebben, en bieden meer flexibiliteit en nauwkeurigere insulinetoediening dan injecties.</p>
+             <p><b>Vraag 38: Wat is continue glucosemonitoring (CGM)?</b><br>
+            Continue glucosemonitoring (CGM) is een systeem dat continu de glucosewaarden in het weefsel meet via een sensor die onder de huid wordt geplaatst. Het geeft inzicht in glucosetrends en waarschuwt bij te hoge of te lage waarden. CGM kan helpen bij het verbeteren van de glucoseregulatie, het verminderen van hypo's en het aanpassen van de behandeling bij zowel diabetes type 1 als type 2.</p>
+             <p><b>Vraag 39: Welke rol speelt voeding bij de behandeling van diabetes?</b><br>
+            Voeding speelt een cruciale rol bij de behandeling van diabetes. Een gezond voedingspatroon helpt bij het reguleren van de bloedsuikerspiegel, het behouden van een gezond gewicht en het verminderen van het risico op complicaties. Voor mensen met diabetes is het belangrijk om de hoeveelheid en het type koolhydraten te monitoren, voldoende vezels te eten en verzadigde vetten te beperken.</p>
+             <p><b>Vraag 40: Hoe belangrijk is lichaamsbeweging bij diabetes?</b><br>
+            Lichaamsbeweging is zeer belangrijk bij diabetes. Het helpt de bloedsuikerspiegel te verlagen doordat de spieren glucose opnemen zonder insuline, verbetert de insulinegevoeligheid, helpt bij gewichtsbeheersing, verlaagt het risico op hart- en vaatziekten en verbetert het algemene welzijn. Voor de meeste mensen met diabetes wordt minstens 150 minuten matige intensieve beweging per week aanbevolen.</p>
+             <p><b>Vraag 41: Wat is een diabetesdieet?</b><br>
+            Een diabetesdieet is geen strikt dieet, maar een gezond voedingspatroon dat helpt de bloedsuikerspiegel te reguleren. Het omvat het eten van regelmatige maaltijden met complexe koolhydraten (volkoren producten, peulvruchten), magere eiwitten, gezonde vetten, veel groenten en fruit, en het beperken van suikers, geraffineerde koolhydraten en verzadigde vetten. De nadruk ligt op portiegrootte en een evenwichtige voedselinname.</p>
+             <p><b>Vraag 42: Kunnen natuurlijke remedies diabetes genezen of behandelen?</b><br>
+            Er zijn geen bewezen natuurlijke remedies die diabetes kunnen genezen. Sommige kruiden en supplementen, zoals kaneel, bittermeloen en chromium, worden soms gebruikt als aanvulling op de reguliere behandeling, maar de wetenschappelijke onderbouwing hiervoor is beperkt. Het is belangrijk om altijd met een zorgverlener te overleggen voordat je natuurlijke remedies gebruikt, omdat ze kunnen interageren met medicijnen.</p>
+        </div>
+    </section>
+
+    <section id="complicaties">
+        <h2 onclick="toggleSection('complicaties-content')">Complicaties</h2>
+        <div id="complicaties-content" class="content">
+             <p><b>Vraag 41: Welke langetermijncomplicaties kunnen optreden bij diabetes?</b><br>
+            Langetermijncomplicaties van diabetes kunnen zijn: hart- en vaatziekten (zoals hartaanvallen en beroertes), neuropathie (zenuwschade), nefropathie (nierschade), retinopathie (oogschade die tot blindheid kan leiden), voetproblemen (die in ernstige gevallen tot amputatie kunnen leiden), huidproblemen, gehoorproblemen en Alzheimer's ziekte. Goede bloedsuikercontrole kan het risico op deze complicaties verminderen.</p>
+             <p><b>Vraag 42: Wat is diabetische retinopathie?</b><br>
+            Diabetische retinopathie is een oogaandoening die ontstaat door schade aan de bloedvaten in het netvlies als gevolg van langdurig verhoogde bloedsuikerspiegels. In een vroeg stadium veroorzaakt het vaak geen symptomen, maar het kan uiteindelijk leiden tot wazig zien, vlekken in het gezichtsveld en zelfs blindheid. Regelmatige oogcontroles zijn belangrijk voor vroege opsporing en behandeling.</p>
+             <p><b>Vraag 43: Wat is diabetische nefropathie?</b><br>
+            Diabetische nefropathie is nierschade die ontstaat door langdurig verhoogde bloedsuikerspiegels. De nieren bevatten miljoenen kleine bloedvaten die bloed filteren, en diabetes kan deze beschadigen. In een vroeg stadium veroorzaakt het vaak geen symptomen, maar het kan uiteindelijk leiden tot nierfalen en de noodzaak voor dialyse of niertransplantatie. Regelmatige controle van de nierfunctie is belangrijk.</p>
+             <p><b>Vraag 44: Wat is diabetische neuropathie?</b><br>
+            Diabetische neuropathie is zenuwschade die ontstaat door langdurig verhoogde bloedsuikerspiegels. Het kan verschillende vormen aannemen, waaronder perifere neuropathie (tintelingen, pijn of gevoelloosheid in handen en voeten), autonome neuropathie (problemen met orgaanfuncties) en mononeuropathie (aantasting van één zenuw). Goede bloedsuikercontrole kan het risico op neuropathie verminderen.</p>
+             <p><b>Vraag 45: Waarom hebben mensen met diabetes een verhoogd risico op hart- en vaatziekten?</b><br>
+            Mensen met diabetes hebben een verhoogd risico op hart- en vaatziekten omdat langdurig verhoogde bloedsuikerspiegels de bloedvaten kunnen beschadigen. Diabetes gaat ook vaak gepaard met andere risicofactoren zoals hoge bloeddruk, abnormale cholesterolwaarden en overgewicht. Samen verhogen deze factoren het risico op atherosclerose (aderverkalking), wat kan leiden tot hartaanvallen, beroertes en perifeer vaatlijden.</p>
+             <p><b>Vraag 46: Wat is een diabetische voet?</b><br>
+            Een diabetische voet is een complicatie waarbij voetproblemen ontstaan door een combinatie van zenuwschade (neuropathie) en verminderde doorbloeding als gevolg van diabetes. Door neuropathie kunnen wondjes onopgemerkt blijven, en door de verminderde doorbloeding genezen wonden slecht. Dit kan leiden tot infecties, zweren en in ernstige gevallen tot amputatie. Goede voetverzorging en regelmatige controles zijn essentieel.</p>
+             <p><b>Vraag 47: Kan diabetes invloed hebben op de mentale gezondheid?</b><br>
+            Ja, diabetes kan invloed hebben op de mentale gezondheid. Mensen met diabetes hebben een verhoogd risico op depressie, angst en diabetesgerelateerde stress (distress). Dit kan te maken hebben met de belasting van het leven met een chronische aandoening, de constante zelfzorg die nodig is, en mogelijk ook met biochemische veranderingen in de hersenen als gevolg van schommelende bloedsuikerspiegels.</p>
+             <p><b>Vraag 48: Wat is diabetische ketoacidose (DKA)?</b><br>
+            Diabetische ketoacidose (DKA) is een ernstige complicatie die voornamelijk voorkomt bij diabetes type 1. Het ontstaat wanneer het lichaam onvoldoende insuline heeft en daardoor glucose niet kan gebruiken voor energie. In plaats daarvan breekt het lichaam vet af, wat leidt tot de productie van ketonen die het bloed verzuren. Symptomen zijn onder andere misselijkheid, braken, buikpijn, snelle ademhaling en een fruitige adem. DKA is een medisch noodgeval.</p>
+        </div>
+    </section>
+
+    <section id="leefstijl">
+        <h2 onclick="toggleSection('leefstijl-content')">Leefstijl en dieet</h2>
+        <div id="leefstijl-content" class="content">
+             <p><b>Vraag 49: Welke voedingsmiddelen moet iemand met diabetes vermijden?</b><br>
+            Mensen met diabetes wordt aangeraden om voedingsmiddelen met toegevoegde suikers, geraffineerde koolhydraten (zoals wit brood en pasta), bewerkte voedingsmiddelen met veel zout en vet, gezoete dranken, alcohol in grote hoeveelheden en verzadigde en transvetten te beperken. Het is echter niet nodig om bepaalde voedingsmiddelen volledig te vermijden; de nadruk ligt op portiegrootte en een evenwichtig voedingspatroon.</p>
+             <p><b>Vraag 50: Welke voedingsmiddelen zijn goed voor mensen met diabetes?</b><br>
+            Goede voedingsmiddelen voor mensen met diabetes zijn: vezelrijke groenten, fruit in matige hoeveelheden, volkoren producten, peulvruchten, noten en zaden, magere eiwitbronnen zoals vis, kip en tofu, en gezonde vetten zoals olijfolie en avocado. Deze voedingsmiddelen hebben een lagere glycemische index, wat betekent dat ze de bloedsuikerspiegel minder snel doen stijgen.</p>
+             <p><b>Vraag 51: Wat is de glycemische index en waarom is deze belangrijk bij diabetes?</b><br>
+            De glycemische index (GI) is een maat voor hoe snel koolhydraten in voedingsmiddelen de bloedsuikerspiegel doen stijgen. Voedingsmiddelen met een hoge GI (zoals wit brood en suiker) worden snel verteerd en veroorzaken een snelle stijging van de bloedsuikerspiegel. Voedingsmiddelen met een lage GI (zoals volkoren producten en peulvruchten) worden langzamer verteerd en veroorzaken een geleidelijkere stijging. Voor mensen met diabetes kan het nuttig zijn om voedingsmiddelen met een lagere GI te kiezen.</p>
+             <p><b>Vraag 52: Mogen mensen met diabetes alcohol drinken?</b><br>
+            Mensen met diabetes kunnen met mate alcohol drinken, maar moeten zich bewust zijn van de effecten op de bloedsuikerspiegel. Alcohol kan de bloedsuikerspiegel zowel verhogen (door de koolhydraten in drankjes) als verlagen (doordat de lever prioriteit geeft aan het afbreken van alcohol boven het aanmaken van glucose). Het is belangrijk om niet op een lege maag te drinken en de bloedsuikerspiegel goed in de gaten te houden.</p>
+             <p><b>Vraag 53: Welke soort lichaamsbeweging is het beste voor mensen met diabetes?</b><br>
+            Een combinatie van aerobe training (zoals wandelen, fietsen, zwemmen) en krachttraining is het beste voor mensen met diabetes. Aerobe training verbetert de insulinegevoeligheid en cardiovasculaire gezondheid, terwijl krachttraining de spieren sterker maakt en helpt bij het behouden van een gezonde stofwisseling. Het belangrijkste is om een activiteit te kiezen die je leuk vindt en die je regelmatig kunt doen.</p>
+             <p><b>Vraag 54: Hoe beïnvloedt stress de bloedsuikerspiegel?</b><br>
+            Stress kan de bloedsuikerspiegel verhogen door de afgifte van stresshormonen zoals cortisol en adrenaline, die de lever aanzetten tot het vrijmaken van glucose en de insulinegevoeligheid verminderen. Bovendien kan stress leiden tot ongezonde copingmechanismen zoals ongezond eten, minder bewegen of medicatie vergeten. Stressmanagementtechnieken zoals mindfulness, yoga en ademhalingsoefeningen kunnen helpen.</p>
+             <p><b>Vraag 55: Kan iemand met diabetes vasten?</b><br>
+            Vasten kan risico's met zich meebrengen voor mensen met diabetes, vooral voor degenen die insuline of bepaalde bloedsuikerverlagende medicijnen gebruiken, vanwege het risico op hypoglykemie (te lage bloedsuiker). Als iemand met diabetes wil vasten, bijvoorbeeld om religieuze redenen, is het belangrijk om dit vooraf met een zorgverlener te bespreken. De medicatie en het voedingspatroon moeten mogelijk worden aangepast.</p>
+             <p><b>Vraag 56: Hoe kan iemand met diabetes omgaan met feestdagen en speciale gelegenheden?</b><br>
+            Bij feestdagen en speciale gelegenheden kan iemand met diabetes: vooraf plannen en nadenken over wat er gegeten gaat worden; kleine porties nemen van gerechten met veel suiker of vet; extra aandacht besteden aan bloedsuikercontrole; voldoende water drinken; actief blijven; en niet te streng zijn voor zichzelf - één dag met wat hogere bloedsuikerwaarden zal geen langetermijneffect hebben op de gezondheid.</p>
+             <p><b>Vraag 57: Welke rol speelt slaap bij diabetes?</b><br>
+            Slaap speelt een belangrijke rol bij diabetes. Onvoldoende of slechte slaap kan leiden tot insulineresistentie, verhoogde eetlust (door verstoring van hongerhormonen) en minder energie om te bewegen, wat allemaal de bloedsuikerregulatie kan verslechteren. Omgekeerd kan diabetes slaapproblemen veroorzaken door symptomen zoals nachtelijk plassen of door complicaties zoals neuropathie. Goede slaaphygiëne is daarom belangrijk.</p>
+        </div>
+    </section>
+
+    <section id="zelfmanagement">
+        <h2 onclick="toggleSection('zelfmanagement-content')">Zelfmanagement en monitoring</h2>
+        <div id="zelfmanagement-content" class="content">
+             <p><b>Vraag 57: Hoe vaak moet iemand met diabetes zijn bloedsuiker controleren?</b><br>
+            De frequentie van bloedsuikercontroles hangt af van het type diabetes, de behandeling en de individuele situatie. Mensen met diabetes type 1 of mensen die insuline gebruiken, controleren vaak meerdere keren per dag. Mensen met diabetes type 2 die geen insuline gebruiken, controleren mogelijk minder vaak. De zorgverlener kan advies geven over de optimale frequentie en tijdstippen voor controles.</p>
+             <p><b>Vraag 58: Wat is het verschil tussen vingerprikken en continue glucosemonitoring?</b><br>
+            Bij vingerprikken wordt een druppel bloed uit de vinger gehaald en op een teststrip geplaatst die in een glucosemeter wordt gestoken, wat een momentopname van de bloedsuikerspiegel geeft. Continue glucosemonitoring (CGM) gebruikt een sensor die onder de huid wordt geplaatst en continu de glucosewaarden in het weefsel meet, waardoor trends zichtbaar worden en waarschuwingen kunnen worden gegeven bij te hoge of te lage waarden.</p>
+             <p><b>Vraag 59: Hoe kan iemand met diabetes zijn bloedsuiker stabiel houden tijdens het sporten?</b><br>
+            Om de bloedsuiker stabiel te houden tijdens het sporten, kan iemand met diabetes: voor het sporten de bloedsuiker controleren; extra koolhydraten eten als de bloedsuiker laag is; de insulinedosis aanpassen in overleg met de zorgverlener; tijdens langdurige inspanning regelmatig de bloedsuiker controleren en zo nodig extra koolhydraten innemen; en na het sporten de bloedsuiker controleren omdat deze nog uren later kan dalen.</p>
+             <p><b>Vraag 60: Wat moet iemand met diabetes doen bij ziekte?</b><br>
+            Bij ziekte is het belangrijk om: vaker de bloedsuiker te controleren, omdat deze vaak stijgt door stresshormonen; voldoende te drinken om uitdroging te voorkomen; indien mogelijk normaal te blijven eten of vloeibare koolhydraten te nemen als eten niet lukt; medicatie te blijven nemen (ook insuline); en contact op te nemen met een zorgverlener als de bloedsuiker zeer hoog blijft, bij braken, diarree of tekenen van diabetische ketoacidose.</p>
+             <p><b>Vraag 61: Hoe kan iemand met diabetes reizen?</b><br>
+            Bij reizen met diabetes is het belangrijk om: voldoende medicatie en testmateriaal mee te nemen (meer dan nodig); een medische verklaring te hebben voor insuline en naalden bij vliegreizen; medicatie in de handbagage te houden; rekening te houden met tijdsverschillen bij het aanpassen van de insulinedosis; en altijd snelwerkende koolhydraten bij zich te hebben voor het geval de bloedsuiker te laag wordt.</p>
+             <p><b>Vraag 62: Wat moet in een diabetesnoodkit zitten?</b><br>
+            Een diabetesnoodkit moet bevatten: snelwerkende koolhydraten (zoals druivensuiker of sap) voor het behandelen van een hypo; langwerkende koolhydraten (zoals een mueslireep) voor na een hypo; bloedglucosemeter met teststrips; extra medicatie; contactgegevens van noodcontacten en zorgverleners; en mogelijk glucagon voor ernstige hypo's (voor mensen die insuline gebruiken).</p>
+             <p><b>Vraag 63: Hoe kan iemand met diabetes omgaan met werkgerelateerde uitdagingen?</b><br>
+            Werkgerelateerde uitdagingen voor mensen met diabetes kunnen worden aangepakt door: open te zijn over de aandoening als dat comfortabel voelt; regelmatige pauzes te nemen voor bloedsuikercontroles, eten of medicatie; een voorraad snacks en medicatie op het werk te hebben; collega's te informeren over hoe ze kunnen helpen bij een hypo; en indien nodig redelijke aanpassingen te vragen, zoals flexibele werktijden voor doktersafspraken.</p>
+             <p><b>Vraag 64: Hoe kan iemand met diabetes zijn voeten verzorgen?</b><br>
+            Goede voetverzorging bij diabetes omvat: dagelijks de voeten inspecteren op wondjes, blaren of roodheid; de voeten dagelijks wassen met lauw water en mild zeep, en goed afdrogen, vooral tussen de tenen; het gebruik van vochtinbrengende crème (maar niet tussen de tenen); het dragen van goed passende schoenen en sokken zonder naden; voorzichtig zijn met het knippen van nagels; en regelmatige controle door een zorgverlener.</p>
+             <p><b>Vraag 65: Wat is het belang van regelmatige controles bij de zorgverlener?</b><br>
+            Regelmatige controles bij de zorgverlener zijn belangrijk om: de effectiviteit van de behandeling te evalueren; de bloedsuikerregulatie te beoordelen via HbA1c-metingen; complicaties vroeg op te sporen door controle van ogen, nieren, voeten en hart- en bloedvaten; de medicatie aan te passen indien nodig; en vragen of zorgen te bespreken. Voor de meeste mensen met diabetes wordt een controle elke 3-6 maanden aanbevolen.</p>
+        </div>
+    </section>
+
+    <section id="psychosociaal">
+        <h2 onclick="toggleSection('psychosociaal-content')">Psychosociale aspecten</h2>
+        <div id="psychosociaal-content" class="content">
+             <p><b>Vraag 65: Hoe kan iemand omgaan met de emotionele impact van een diabetesdiagnose?</b><br>
+            Omgaan met de emotionele impact van een diabetesdiagnose kan door: tijd te nemen om de diagnose te verwerken; betrouwbare informatie te verzamelen over diabetes; te praten met zorgverleners, familie en vrienden; contact te zoeken met lotgenoten via patiëntenverenigingen of ondersteuningsgroepen; professionele hulp te zoeken bij aanhoudende negatieve gevoelens; en kleine, haalbare doelen te stellen voor zelfzorg in plaats van overweldigd te raken door alle veranderingen.</p>
+             <p><b>Vraag 66: Wat is diabetesburnout en hoe kan iemand hiermee omgaan?</b><br>
+            Diabetesburnout is een toestand van fysieke en emotionele uitputting veroorzaakt door de constante eisen van diabetesmanagement. Symptomen zijn onder andere frustratie, vermijdingsgedrag en verwaarlozing van zelfzorg. Manieren om hiermee om te gaan zijn: erkennen van de burnout; praten met zorgverleners; tijdelijk vereenvoudigen van het zorgregime; hulp zoeken bij een psycholoog of diabetescoach; en contact zoeken met lotgenoten die vergelijkbare ervaringen hebben.</p>
+             <p><b>Vraag 67: Hoe kan iemand met diabetes dit bespreken met familie en vrienden?</b><br>
+            Bij het bespreken van diabetes met familie en vrienden kan iemand: duidelijke, eenvoudige informatie geven over wat diabetes is; uitleggen wat zij kunnen doen om te helpen (zoals bepaalde voedingsmiddelen in huis hebben of leren hoe ze kunnen helpen bij een hypo); grenzen stellen als mensen te bemoeizuchtig worden; en open zijn over wat wel en niet prettig is in de manier waarop anderen reageren op de diabetes.</p>
+             <p><b>Vraag 68: Welke invloed kan diabetes hebben op relaties en intimiteit?</b><br>
+            Diabetes kan relaties en intimiteit beïnvloeden door: vermoeidheid die het sociale leven kan beperken; stress over gezondheid die emotionele intimiteit kan beïnvloeden; en bij sommige mensen seksuele problemen zoals erectiestoornissen bij mannen of vaginale droogheid bij vrouwen als gevolg van zenuw- of bloedvatschade. Open communicatie met de partner en het bespreken van problemen met zorgverleners kunnen helpen deze uitdagingen aan te pakken.</p>
+             <p><b>Vraag 69: Welke ondersteuning is er beschikbaar voor mensen met diabetes?</b><br>
+            Ondersteuning voor mensen met diabetes is beschikbaar via: diabeteszorgverleners (internist, diabetesverpleegkundige, diëtist, podotherapeut); patiëntenverenigingen zoals de Diabetesvereniging Nederland; lotgenotencontact via ondersteuningsgroepen; online forums en communities; diabeteseducatieprogramma's; en psychologische ondersteuning via psychologen of diabetescoaches die gespecialiseerd zijn in chronische aandoeningen.</p>
+             <p><b>Vraag 70: Hoe kunnen ouders een kind met diabetes ondersteunen?</b><br>
+            Ouders kunnen een kind met diabetes ondersteunen door: kennis op te doen over diabetes; het kind te helpen bij de dagelijkse zorg maar ook geleidelijk zelfstandigheid aan te moedigen; open te communiceren over gevoelens; het kind te behandelen als een 'normaal' kind met enkele extra behoeften; samen te werken met school en andere verzorgers; en zelf ook ondersteuning te zoeken via oudergroepen of professionele hulp.</p>
+        </div>
+    </section>
+
+    <section id="speciaal">
+        <h2 onclick="toggleSection('speciaal-content')">Speciale populaties</h2>
+        <div id="speciaal-content" class="content">
+             <p><b>Vraag 73: Wat zijn de specifieke uitdagingen voor kinderen met diabetes?</b><br>
+            Specifieke uitdagingen voor kinderen met diabetes zijn: afhankelijkheid van ouders en verzorgers voor diabetesmanagement; moeilijkheden met het begrijpen van de aandoening en het belang van behandeling; onvoorspelbare eetpatronen en activiteitenniveaus; groei en hormonale veranderingen die de insulinebehoefte beïnvloeden; sociale druk en het gevoel 'anders' te zijn; en de geleidelijke overgang naar zelfstandig diabetesmanagement naarmate ze ouder worden.</p>
+             <p><b>Vraag 74: Wat zijn de specifieke uitdagingen voor ouderen met diabetes?</b><br>
+            Specifieke uitdagingen voor ouderen met diabetes zijn: verhoogd risico op hypoglykemie en verminderd vermogen om de waarschuwingssignalen te herkennen; comorbiditeit (het gelijktijdig hebben van meerdere aandoeningen); polyfarmacie (het gebruik van meerdere medicijnen); cognitieve beperkingen die zelfzorg kunnen bemoeilijken; verminderde nierfunctie die de medicatiedosering kan beïnvloeden; en sociale isolatie die kan leiden tot verminderde ondersteuning.</p>
+             <p><b>Vraag 75: Hoe beïnvloedt diabetes de zwangerschap?</b><br>
+            Diabetes kan de zwangerschap beïnvloeden door het risico te verhogen op: complicaties zoals pre-eclampsie (zwangerschapsvergiftiging); macrosomie (een te grote baby); vroeggeboorte; keizersnede; en aangeboren afwijkingen. Goede bloedsuikercontrole vóór en tijdens de zwangerschap kan deze risico's aanzienlijk verminderen. Vrouwen met diabetes hebben intensievere monitoring nodig tijdens de zwangerschap.</p>
+             <p><b>Vraag 76: Wat is zwangerschapsdiabetes en hoe wordt het behandeld?</b><br>
+            Zwangerschapsdiabetes is een vorm van diabetes die tijdens de zwangerschap ontstaat en meestal na de bevalling weer verdwijnt. Het wordt veroorzaakt door zwangerschapshormonen die de werking van insuline blokkeren. Behandeling omvat: regelmatige bloedsuikercontrole; aanpassingen in voeding en lichaamsbeweging; en indien nodig insulinetherapie. Na de bevalling is het belangrijk om te controleren of de diabetes is verdwenen en om regelmatig te screenen op diabetes type 2 in de toekomst.</p>
+             <p><b>Vraag 77: Hoe kan diabetes worden beheerd tijdens de ramadan voor moslims?</b><br>
+            Voor moslims met diabetes die willen vasten tijdens de ramadan, is het belangrijk om: vooraf met een zorgverlener te overleggen; medicatie aan te passen (timing en mogelijk dosering); de bloedsuiker vaker te controleren; voldoende te drinken en evenwichtige maaltijden te eten tijdens de iftar (avondmaaltijd) en suhoor (ochtendmaaltijd); en het vasten te onderbreken bij tekenen van hypo- of hyperglykemie. Sommige mensen met diabetes, zoals degenen met instabiele diabetes, wordt afgeraden te vasten.</p>
+             <p><b>Vraag 78: Wat zijn de specifieke aandachtspunten voor atleten met diabetes?</b><br>
+            Specifieke aandachtspunten voor atleten met diabetes zijn: het aanpassen van de insulinedosis en koolhydraatinname aan de intensiteit en duur van de training; het monitoren van de bloedsuikerspiegel voor, tijdens en na het sporten; het herkennen en behandelen van hypoglykemie tijdens het sporten; het begrijpen van hoe verschillende soorten activiteiten de bloedsuikerspiegel beïnvloeden; en het werken met een sportdiëtist en diabetesteam om een optimaal voedings- en behandelplan te ontwikkelen.</p>
+             <p><b>Vraag 79: Hoe beïnvloedt diabetes de zorg rondom operaties?</b><br>
+            Bij operaties bij mensen met diabetes is extra aandacht nodig voor: bloedsuikercontrole voor, tijdens en na de operatie; aanpassing van diabetesmedicatie en insuline; intraveneuze glucose- en insulinetoediening tijdens langere operaties; en monitoring op infecties en wondgenezingsproblemen na de operatie. Goede bloedsuikercontrole voor een operatie kan het risico op complicaties verminderen.</p>
+        </div>
+    </section>
+
+    <section id="preventie">
+        <h2 onclick="toggleSection('preventie-content')">Preventie</h2>
+        <div id="preventie-content" class="content">
+             <p><b>Vraag 81: Kan diabetes type 1 worden voorkomen?</b><br>
+            Op dit moment is er geen bekende manier om diabetes type 1 te voorkomen. Het is een auto-immuunziekte met een genetische component, maar ook omgevingsfactoren spelen een rol. Onderzoek naar preventie richt zich op het identificeren van mensen met een hoog risico en het ontwikkelen van interventies om het immuunsysteem te beïnvloeden, maar deze zijn nog experimenteel.</p>
+             <p><b>Vraag 82: Kan diabetes type 2 worden voorkomen?</b><br>
+            Ja, diabetes type 2 kan in veel gevallen worden voorkomen of uitgesteld door leefstijlveranderingen, vooral bij mensen met een verhoogd risico of prediabetes. Effectieve preventiestrategieën zijn: het bereiken en behouden van een gezond gewicht; regelmatige lichaamsbeweging (minstens 150 minuten per week); een gezond voedingspatroon rijk aan vezels, groenten en fruit en arm aan bewerkte koolhydraten en verzadigde vetten; en niet roken.</p>
+             <p><b>Vraag 83: Wat is prediabetes en hoe kan het worden aangepakt?</b><br>
+            Prediabetes is een toestand waarbij de bloedsuikerspiegel hoger is dan normaal, maar nog niet hoog genoeg om als diabetes te worden gediagnosticeerd. Het is een waarschuwingssignaal dat iemand risico loopt op het ontwikkelen van diabetes type 2. Prediabetes kan worden aangepakt door: gewichtsverlies (5-7% van het lichaamsgewicht); regelmatige lichaamsbeweging; gezonde voeding; en in sommige gevallen medicatie zoals metformine.</p>
+             <p><b>Vraag 84: Welke screeningstests zijn er voor diabetes?</b><br>
+            Screeningstests voor diabetes omvatten: nuchtere bloedsuikertest (na minstens 8 uur vasten); orale glucosetolerantietest (waarbij de bloedsuiker wordt gemeten na het drinken van een suikeroplossing); HbA1c-test (die het gemiddelde bloedsuikergehalte over de afgelopen 2-3 maanden meet); en willekeurige bloedsuikertest. De keuze van de test hangt af van de individuele situatie en risicofactoren.</p>
+             <p><b>Vraag 85: Wie zou moeten worden gescreend op diabetes?</b><br>
+            Screening op diabetes wordt aanbevolen voor: mensen ouder dan 45 jaar; mensen met overgewicht of obesitas; mensen met een eerstegraads familielid met diabetes; vrouwen die zwangerschapsdiabetes hebben gehad; mensen met hoge bloeddruk of abnormale cholesterolwaarden; mensen met hart- en vaatziekten; en bepaalde etnische groepen met een verhoogd risico. De frequentie van screening hangt af van de individuele risicofactoren.</p>
+             <p><b>Vraag 86: Hoe kunnen complicaties van diabetes worden voorkomen?</b><br>
+            Complicaties van diabetes kunnen worden voorkomen of vertraagd door: goede bloedsuikercontrole (streven naar een HbA1c binnen het streefbereik); regelmatige controle en behandeling van bloeddruk en cholesterol; niet roken; regelmatige lichaamsbeweging; gezonde voeding; regelmatige controles bij zorgverleners voor vroege opsporing van complicaties; goede voetverzorging; en regelmatige oogcontroles.</p>
+             <p><b>Vraag 87: Wat is het verband tussen obesitas en diabetes type 2?</b><br>
+            Obesitas, vooral abdominale obesitas (vet rond de buik), is een sterke risicofactor voor diabetes type 2. Vetcellen, vooral die rond de buik, produceren hormonen en ontstekingsstoffen die insulineresistentie veroorzaken. Hierdoor moet de alvleesklier harder werken om voldoende insuline te produceren, en kan deze op den duur uitgeput raken. Gewichtsverlies kan de insulinegevoeligheid verbeteren en het risico op diabetes type 2 aanzienlijk verminderen.</p>
+        </div>
+    </section>
+
+    <section id="onderzoek">
+        <h2 onclick="toggleSection('onderzoek-content')">Onderzoek en innovatie</h2>
+        <div id="onderzoek-content" class="content">
+             <p><b>Vraag 89: Wat zijn de nieuwste ontwikkelingen in diabetesbehandeling?</b><br>
+            Recente ontwikkelingen in diabetesbehandeling omvatten: geavanceerde insulinepompen en continue glucosemonitoring die samen een 'kunstmatig alvleesklier' vormen; nieuwe klassen medicijnen zoals GLP-1-receptoragonisten en SGLT2-remmers die naast bloedsuikerverlaging ook cardiovasculaire voordelen bieden; slimme insulinepennen die doses registreren; apps en digitale platforms voor diabetesmanagement; en nieuwe toedieningsvormen van insuline zoals inhaleerbare insuline.</p>
+             <p><b>Vraag 90: Is er vooruitgang in het vinden van een genezing voor diabetes?</b><br>
+            Er wordt vooruitgang geboekt in het onderzoek naar een genezing voor diabetes, maar een definitieve genezing is er nog niet. Voor diabetes type 1 richt onderzoek zich op: immuuntherapie om de auto-immuunaanval te stoppen; stamceltherapie om nieuwe insulineproducerende cellen te kweken; en transplantatie van alvleesklier of eilandjes van Langerhans. Voor diabetes type 2 kan in sommige gevallen een remissie worden bereikt door drastisch gewichtsverlies, bijvoorbeeld na bariatrische chirurgie.</p>
+             <p><b>Vraag 91: Wat is een kunstmatige alvleesklier?</b><br>
+            Een kunstmatige alvleesklier (of closed-loop systeem) is een technologie die een continue glucosemonitor, een algoritme en een insulinepomp combineert om automatisch de juiste hoeveelheid insuline toe te dienen op basis van real-time glucosewaarden. Het systeem bootst de functie van een gezonde alvleesklier na door insuline af te geven wanneer de bloedsuiker stijgt en de afgifte te verminderen wanneer de bloedsuiker daalt, wat leidt tot stabielere glucosewaarden met minder inspanning van de gebruiker.</p>
+             <p><b>Vraag 92: Wat is islet-celtransplantatie?</b><br>
+            Islet-celtransplantatie is een experimentele behandeling voor diabetes type 1 waarbij eilandjes van Langerhans (clusters van cellen in de alvleesklier die insuline produceren) van een donor worden getransplanteerd naar de lever van de ontvanger. Het doel is om de insulineproductie te herstellen. Hoewel de procedure veelbelovend is, zijn er beperkingen zoals de schaarste aan donoren, de noodzaak van levenslange immuunsuppressie en het feit dat de getransplanteerde cellen na verloop van tijd vaak ophouden met functioneren.</p>
+             <p><b>Vraag 93: Welke rol speelt genetica in diabetesonderzoek?</b><br>
+            Genetica speelt een belangrijke rol in diabetesonderzoek door: het identificeren van genen die het risico op diabetes verhogen; het begrijpen van de onderliggende mechanismen van de ziekte; het ontwikkelen van gepersonaliseerde behandelingen op basis van genetische profielen (precisiegeneeskunde); het identificeren van subtypen van diabetes die mogelijk verschillend reageren op behandelingen; en het onderzoeken van gentherapie als potentiële behandeling voor bepaalde vormen van diabetes.</p>
+             <p><b>Vraag 94: Wat is telemonitoring bij diabetes?</b><br>
+            Telemonitoring bij diabetes is het gebruik van technologie om diabetesgegevens op afstand te verzamelen en te delen met zorgverleners. Dit kan omvatten: het uploaden van bloedsuikerwaarden van meters of continue glucosemonitoren naar een beveiligd platform; het bijhouden van voeding, beweging en medicatie via apps; videoconsulten met zorgverleners; en geautomatiseerde feedback of waarschuwingen op basis van de verzamelde gegevens. Telemonitoring kan de zorg toegankelijker maken en de betrokkenheid van patiënten vergroten.</p>
+             <p><b>Vraag 95: Wat zijn de nieuwste inzichten in de oorzaken van diabetes?</b><br>
+            Recente inzichten in de oorzaken van diabetes omvatten: het begrip dat diabetes type 2 niet één ziekte is, maar verschillende subtypen kan hebben met verschillende onderliggende mechanismen; de rol van darmmicrobiota (darmflora) bij insulineresistentie en ontsteking; de impact van omgevingsfactoren zoals bepaalde chemicaliën en luchtvervuiling; de rol van bruin vet bij energiemetabolisme; en de complexe interacties tussen genetica, epigenetica (veranderingen in genexpressie) en omgevingsfactoren.</p>
+             <p><b>Vraag 96: Wat is precisiemedicijn in de context van diabetes?</b><br>
+            Precisiemedicijn in de context van diabetes is een benadering waarbij behandelingen worden afgestemd op de specifieke kenmerken van een individu, zoals genetica, biomarkers, omgevingsfactoren en leefstijl. Het doel is om af te stappen van de 'one-size-fits-all' benadering en in plaats daarvan behandelingen te ontwikkelen die beter werken voor specifieke subgroepen van patiënten. Dit kan leiden tot effectievere behandelingen met minder bijwerkingen en een betere kwaliteit van leven.</p>
+        </div>
+    </section>
+
+    <section id="overig">
+        <h2 onclick="toggleSection('overig-content')">Overige vragen</h2>
+        <div id="overig-content" class="content">
+             <p><b>Vraag 97: Wat is het verschil tussen diabetes mellitus en diabetes insipidus?</b><br>
+            Diabetes mellitus en diabetes insipidus zijn twee volledig verschillende aandoeningen die alleen de naam 'diabetes' (wat 'doorstroming' betekent) gemeen hebben. Diabetes mellitus is de 'gewone' diabetes waarbij er problemen zijn met insuline en bloedsuikerregulatie. Diabetes insipidus is een zeldzame aandoening waarbij de nieren niet goed reageren op het antidiuretisch hormoon (ADH), wat leidt tot overmatige urineproductie en dorst, maar geen verhoogde bloedsuikerspiegel.</p>
+             <p><b>Vraag 98: Kan diabetes invloed hebben op de vruchtbaarheid?</b><br>
+            Ja, diabetes kan invloed hebben op de vruchtbaarheid bij zowel mannen als vrouwen. Bij mannen kan diabetes leiden tot erectiestoornissen en verminderde zaadkwaliteit door zenuw- en bloedvatschade. Bij vrouwen kan diabetes de menstruatiecyclus verstoren en het risico op polycysteus ovariumsyndroom (PCOS) verhogen, wat de vruchtbaarheid kan verminderen. Goede bloedsuikercontrole kan deze problemen helpen voorkomen of verminderen.</p>
+             <p><b>Vraag 99: Wat is het verband tussen diabetes en dementie?</b><br>
+            Er is een verband tussen diabetes (vooral type 2) en een verhoogd risico op dementie, waaronder de ziekte van Alzheimer. Dit kan te maken hebben met schade aan bloedvaten in de hersenen door langdurig verhoogde bloedsuikerspiegels, insulineresistentie in de hersenen, chronische ontsteking, en gedeelde risicofactoren zoals obesitas en hoge bloeddruk. Goede bloedsuikercontrole, samen met een gezonde leefstijl, kan mogelijk het risico op dementie verminderen.</p>
+             <p><b>Vraag 100: Waar kan ik betrouwbare informatie over diabetes vinden?</b><br>
+            Betrouwbare informatie over diabetes kan worden gevonden bij: de Diabetesvereniging Nederland (DVN); het Diabetes Fonds; websites van academische ziekenhuizen en gezondheidsinstellingen zoals het UMC Utrecht of het Máxima MC; internationale organisaties zoals de International Diabetes Federation; wetenschappelijke tijdschriften; en bij je eigen diabeteszorgverleners zoals je internist, diabetesverpleegkundige of huisarts. Wees voorzichtig met informatie van commerciële websites of sociale media zonder duidelijke bronvermelding.</p>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var sections = document.querySelectorAll("section");
+            sections.forEach(function(section) {
+                section.style.display = "block"; // Zorg dat secties zichtbaar zijn
+                const contentDiv = section.querySelector('.content');
+                if (contentDiv) {
+                    // Sla de originele HTML op voor later herstel/highlighting
+                    contentDiv.setAttribute('data-original-html', contentDiv.innerHTML);
+                    contentDiv.style.display = 'none'; // Maar de inhoud verborgen
+                }
+            });
+            console.log("DOM Loaded. Initial setup complete."); // Log voor bevestiging
+        });
+
+        // Functie om sectie te tonen na klik op inhoudsopgave link
+        function showSectionAndPreventDefault(event, sectionId) {
+            event.preventDefault(); // Voorkom standaard # link gedrag
+            console.log(`Showing section via TOC: ${sectionId}`);
+            var targetElement = document.getElementById(sectionId);
+
+            // Verberg andere meldingen
+            document.getElementById('noResults').style.display = 'none';
+            document.getElementById('multiWordWarning').style.display = 'none'; // <-- TOEGEVOEGDE REGEL
+
+             // Verberg eerst alle secties en hun inhoud
+            var allSections = document.querySelectorAll("section");
+             allSections.forEach(function(sec) {
+                 sec.style.display = "none";
+                 const contentDiv = sec.querySelector('.content');
+                 if (contentDiv) {
+                     contentDiv.style.display = 'none';
+                 }
+             });
+
+            // Verwijder alle highlighting
+            var contentDivs = document.querySelectorAll(".content");
+            contentDivs.forEach(function(div) {
+                 removeHighlighting(div); // Zorg dat highlighting weg is na TOC klik
+            });
+
+             // Toon de geselecteerde sectie (niet de inhoud ervan)
+            if (targetElement) {
+                targetElement.style.display = "block";
+                 // Scroll naar de sectie titel
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                console.log(` - Section ${sectionId} displayed and scrolled to.`);
+            } else {
+                 console.error(` - Section ${sectionId} not found.`);
+            }
+
+            // Reset zoekveld
+            document.getElementById("search-input").value = "";
+            console.log(" - Search input reset.");
+        }
+
+        // Functie om inhoud van sectie te tonen/verbergen
+        function toggleSection(contentId) {
+            console.log(`Toggling content: ${contentId}`);
+            var content = document.getElementById(contentId);
+            if (content) {
+                if (content.style.display === "none" || content.style.display === "") {
+                    content.style.display = "block";
+                     console.log(` - Content ${contentId} shown.`);
+                } else {
+                    content.style.display = "none";
+                     console.log(` - Content ${contentId} hidden.`);
+                }
+            } else {
+                console.error(` - Element with ID '${contentId}' not found for toggle.`);
+            }
+        }
+
+        // --- performSearch: Checkt eerst op meerdere woorden ---
+        function performSearch() {
+            var searchText = document.getElementById("search-input").value.trim(); // Trim spaties
+            const multiWordWarningDiv = document.getElementById("multiWordWarning"); // Haal referentie op
+            const noResultsMessage = document.getElementById("noResults"); // Haal referentie op
+
+            // Verberg altijd beide meldingen bij de start van een zoekopdracht
+            multiWordWarningDiv.style.display = 'none';
+            noResultsMessage.style.display = 'none';
+
+            console.log("\n--- Starting Search ---");
+
+            // 1. Check voor lege zoekopdracht (reset)
+            if (searchText === "") {
+                 console.log("Search text is empty, showing all sections (content hidden).");
+                 var allSections = document.querySelectorAll("section");
+                 allSections.forEach(function(sec) {
+                     sec.style.display = "block";
+                     const contentDiv = sec.querySelector('.content');
+                     if (contentDiv) {
+                         contentDiv.style.display = 'none';
+                         removeHighlighting(contentDiv);
+                     }
+                 });
+                 // multiWordWarningDiv & noResultsMessage al verborgen
+                 console.log("--- Search Complete (Empty Search) ---");
+                return;
+            }
+
+            // 2. Check op meerdere woorden
+            const searchWords = searchText.toLowerCase().split(' ').filter(word => word.length > 0);
+            console.log("Detected words:", searchWords);
+            if (searchWords.length > 1) {
+                console.log("Multiple words detected. Showing warning and stopping search.");
+                multiWordWarningDiv.style.display = 'block'; // Toon de waarschuwing
+                 // Verberg alle secties voor de zekerheid (optioneel)
+                 var allSections = document.querySelectorAll("section");
+                 allSections.forEach(function(sec) {
+                     sec.style.display = "none";
+                 });
+                console.log("--- Search Stopped (Multi-word Warning) ---");
+                return; // Stop de functie hier!
+            }
+
+            // 3. Ga verder met zoeken naar één woord (of de exacte zin, afhankelijk van de highlight-logica)
+            const searchPhrase = searchText.toLowerCase(); // Nu weten we dat het één woord is (of lege string, maar die is al afgevangen)
+            console.log("Search Phrase/Word:", searchPhrase);
+            var contentDivs = document.querySelectorAll(".content");
+            let found = false;
+
+            // Verberg secties en verwijder highlighting vooraf
+            console.log("Hiding all sections and removing previous highlights...");
+            contentDivs.forEach(function(div) {
+                div.parentNode.style.display = "none";
+                removeHighlighting(div); // Gebruik removeHighlighting om te herstellen naar origineel
+            });
+            console.log("Done hiding/resetting.");
+
+            // Zoek en toon relevante secties
+            contentDivs.forEach(function(div, index) {
+                // Herstel eerst naar origineel VOORDAT we innerText checken
+                 var originalHTML = div.getAttribute('data-original-html');
+                 if (!originalHTML) {
+                     console.warn(`DIV ${index + 1} missing data-original-html. Using current innerHTML.`);
+                     originalHTML = div.innerHTML; // Fallback
+                     div.setAttribute('data-original-html', originalHTML); // Probeer op te slaan
+                 } else {
+                    // Belangrijk: Zorg dat we altijd vanuit schoon origineel werken voor check en highlight
+                    div.innerHTML = originalHTML;
+                 }
+
+                var contentText = div.innerText.toLowerCase(); // Tekst om in te zoeken (na herstel!)
+                let phraseFoundInThisDiv = false;
+
+                console.log(`\n[Checking DIV ${index + 1} for "${searchPhrase}"]`);
+                if (contentText.includes(searchPhrase)) { // Check of het woord/zin erin staat
+                    phraseFoundInThisDiv = true;
+                    found = true; // Zet overall found flag
+                    div.parentNode.style.display = "block"; // Toon parent <section>
+                    div.style.display = "block"; // Toon de .content div
+                    highlightSinglePhrase(div, searchPhrase); // Markeer het woord/zin
+                    console.log(`  -> MATCH FOUND in DIV ${index + 1}.`);
+                } else {
+                    console.log(`  -> NO MATCH in DIV ${index + 1}.`);
+                }
+            });
+
+            // Handel de "Geen resultaten" melding af (alleen als NIET de multi-word warning is getoond)
+            if (!found) { // Alleen tonen als er echt niets gevonden is
+                noResultsMessage.style.display = "block";
+            }
+            console.log("--- Search Complete --- Overall 'found' status:", found);
+        }
+        // --- EINDE performSearch ---
+
+
+        // Functie om zoekterm te markeren (enkele zin/woord)
+        function highlightSinglePhrase(element, searchPhrase) {
+            var originalHTML = element.getAttribute('data-original-html');
+            if (!originalHTML) {
+                 console.warn("Cannot highlight: data-original-html not found for element:", element);
+                 return;
+            }
+
+            try {
+                // Escaped de zoekterm voor speciale regex karakters
+                const escapedSearchPhrase = searchPhrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                // Maak de regex GLOBAAL ('g') en case-insensitive ('i')
+                const regex = new RegExp(escapedSearchPhrase, 'gi');
+
+                // Voer de vervanging uit op de *originele* HTML string
+                const newHTML = originalHTML.replace(regex, '<span class="highlight">$&</span>');
+
+                // Update de innerHTML alleen als er daadwerkelijk iets veranderd is
+                if (element.innerHTML !== newHTML) {
+                    element.innerHTML = newHTML;
+                }
+            } catch (e) {
+                 console.error(`Error creating or using RegExp for phrase "${searchPhrase}":`, e);
+                 // Herstel naar origineel bij fout
+                 if (originalHTML) element.innerHTML = originalHTML;
+            }
+        }
+
+        // Functie om markering te verwijderen (herstel originele HTML)
+        function removeHighlighting(element) {
+             var originalHTML = element.getAttribute('data-original-html');
+             // Herstel alleen als de huidige inhoud verschilt van het origineel EN het origineel bestaat
+             if (originalHTML && element.innerHTML !== originalHTML) {
+                 element.innerHTML = originalHTML;
+             } else if (!originalHTML) {
+                  // console.warn("Cannot remove highlights: data-original-html not found for:", element.id);
+             }
+        }
+    </script>
+	
+ </body> <!-- Zorg dat dit BOVEN de bestaande </body> tag komt -->
+
+ <footer style="text-align: center; margin-top: 0px; padding-top: 1px; border-top: 1px solid #eee;">
+    <p style="margin-bottom: 0px;">Auteur: Diabetes Liga Midden-Limburg</p>
+    <p style="margin-top: 0;">
+        <a href="https://www.dlml.be" target="_blank" style="color: #23a9e4; text-decoration: none; font-weight: bold;">
+            <span style="color: #23a9e4; margin-right: 4px; vertical-align: middle;">🌐</span> <!-- Emoji wereldbol -->
+            www.dlml.be
+        </a>
+    </p>
+</footer>
+
+</html>
