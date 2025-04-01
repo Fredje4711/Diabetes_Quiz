@@ -17,20 +17,28 @@
 
         #quiz-container {
             background-color: #fff;
-            padding: 25px;
+            /* --- AFSTAND 2 --- */
+            /* De 'padding' hier bepaalt de interne ruimte van de container. */
+            /* De BOVENSTE padding (25px) beïnvloedt Afstand 2. */
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             max-width: 700px;
             width: 90%;
-            /* margin: 20px auto; OUDE MARGE */
-            margin: 20px auto 5px auto; /* NIEUW: Kleinere ondermarge (pas 5px aan naar wens) */
+            /* --- AFSTAND 1 & 4 --- */
+            /* De 'margin' bepaalt de externe ruimte rond de container. */
+            /* De EERSTE waarde (20px) is de BOVENMARGE (Afstand 1). */
+            /* De DERDE waarde (5px) is de ONDERMARGE (Deel van Afstand 4). */
+            margin: 0px auto 0px auto; /* NIEUW: Kleinere ondermarge */
         }
 
         h1 {
             color: #23a9e4;
             text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
+            margin-top: 0; /* H1 heeft geen eigen bovenmarge */
+            /* --- AFSTAND 3 --- */
+            /* De 'margin-bottom' hier bepaalt de ruimte ONDER de H1 (Afstand 3). */
+            margin-bottom: 0px;
         }
 
         #question-container {
@@ -133,7 +141,7 @@
 
          #progress-text {
              text-align: center;
-             margin-bottom: 15px;
+             margin-bottom: 15px; /* Ruimte onder de progress text */
              font-style: italic;
              color: #555;
          }
@@ -148,8 +156,10 @@
 
         footer {
             text-align: center;
-            /* margin-top: 30px; OUDE MARGE */
-            margin-top: 1px; /* NIEUW: Kleinere bovenmarge (pas 10px aan naar wens) */
+            /* --- AFSTAND 4 --- */
+            /* De 'margin-top' hier bepaalt de ruimte BOVEN de footer. */
+            /* Samen met de margin-bottom van #quiz-container bepaalt dit Afstand 4. */
+            margin-top: -5px; /* NIEUW: Kleinere bovenmarge */
             padding: 15px;
             border-top: 1px solid #eee;
             color: #666;
@@ -227,7 +237,7 @@
     <script>
         // --- Quiz Data (50 Vragen - CONTROLEER OP JUISTHEID!) ---
         const quizData = [
-            // Eerste 15
+            // ... (rest van je vragen data blijft ongewijzigd) ...
             { question: "Wat is de meest voorkomende vorm van diabetes?", answers: ["Diabetes Type 1", "Diabetes Type 2", "Zwangerschapsdiabetes", "MODY"], correctAnswer: "Diabetes Type 2" },
             { question: "Welk hormoon reguleert de bloedsuikerspiegel door glucose uit het bloed op te nemen?", answers: ["Glucagon", "Adrenaline", "Insuline", "Cortisol"], correctAnswer: "Insuline" },
             { question: "Wat is een veelvoorkomend symptoom van onbehandelde diabetes?", answers: ["Gewichtstoename", "Veel dorst en vaak plassen", "Lage bloeddruk", "Energieoverschot"], correctAnswer: "Veel dorst en vaak plassen" },
