@@ -481,79 +481,84 @@
             submitScoreButton.style.marginTop = '15px';
             submitScoreButton.style.marginRight = '10px';
 
-            // --- GECORRIGEERDE ACTIE (v2): Stuur data direct naar Google Apps Script met CORS ---
+            // --- NIEUWE ACTIE: Stuur data direct naar Formspree ---
             submitScoreButton.onclick = () => { // Opening brace 1 (onclick callback)
-                // --- BELANGRIJK: Vervang placeholder door JOUW Web App URL ---
-                const scriptURL = "https://script.google.com/macros/s/AKfycbyl_mMvrLKWpM-lYfrnwTccP3kxFNzJPhCCEATFEDZoHaz8ouO7QfP3nwmC5PD3XPc3/exec"; // Plak hier JOUW URL
+                // --- BELANGRIJK: Plak hier JOUW Formspree Endpoint URL ---
+                const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< VERVANG DEZE REGEL MET JOUW URL
                 // --- EINDE BELANGRIJK ---
 
                  // Check of de URL placeholder nog aanwezig is (of leeg is)
-                 if (scriptURL === "JOUW_GEKOPIEERDE_WEB_APP_URL_HIER" || !scriptURL || scriptURL.trim() === "") {
-                     alert("Fout: De Google Apps Script URL is nog niet (correct) ingesteld in de code!");
+                 if (formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || !formspreeURL || formspreeURL.trim() === "") {
+                     alert("Fout: De Formspree URL is nog niet (correct) ingesteld in de code!");
                      return; // Stop als URL ontbreekt
                  }
 
                 // De data die we willen sturen
                 const dataToSend = {
-                    name: participantName,
-                    score: score // Score is al een nummer
+                    naam: participantName, // Gebruik 'naam' zoals in je Google Form, Formspree pikt dit op
+                    score: score,
+                    quiz_titel: "Diabetes Quiz (50 Vragen)" // Extra info meesturen kan handig zijn
                 };
 
-                console.log("Score indienen - Data verzenden naar Apps Script:", dataToSend);
+                console.log("Score indienen - Data verzenden naar Formspree:", dataToSend);
 
                 // Knoppen aanpassen tijdens verzenden
                 submitScoreButton.innerText = 'Bezig met indienen...';
                 submitScoreButton.disabled = true;
                 resetButton.disabled = true; // Ook de reset knop even uitschakelen
 
-                // Gebruik fetch om de data te POSTen met CORS mode
-                fetch(scriptURL, { // Opening brace 2 (fetch options object)
+                // Gebruik fetch om de data te POSTen naar Formspree
+                fetch(formspreeURL, { // Opening brace 2 (fetch options object)
                     method: 'POST',
-                    mode: 'cors', // Gebruik CORS mode
-                    cache: 'no-cache',
+                    mode: 'cors', // Formspree ondersteunt CORS
                     headers: { // Opening brace 3 (headers object)
-                        'Content-Type': 'application/json' // Stuur als JSON
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json' // Vraag JSON terug van Formspree
                     }, // Closing brace 3 (headers object)
-                    redirect: 'follow',
                     body: JSON.stringify(dataToSend) // Zet JavaScript object om naar JSON string
-                }) // Closing parenthesis for fetch() call - CORRECTIE
+                }) // Closing parenthesis for fetch() call
                 .then(response => { // Opening brace 4 (.then for response)
                     // Check of het netwerk antwoord OK is (status 2xx)
-                    if (!response.ok) {
-                        // Probeer meer info uit de response te halen bij een fout
-                        return response.text().then(text => {
-                           throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status}). Server response: ${text}`);
-                        });
+                    if (response.ok) {
+                       // Als Formspree een OK status teruggeeft, parse het antwoord
+                       return response.json();
+                    } else {
+                       // Als er een HTTP error is (4xx, 5xx), probeer de fout te lezen
+                       return response.json().then(errorData => {
+                           // Gooi een error met de info van Formspree indien mogelijk
+                           throw new Error(`Formspree error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : (errorData.error || response.statusText)} (status: ${response.status})`);
+                       }).catch(() => {
+                           // Fallback als de error body geen JSON is
+                           throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status})`);
+                       });
                     }
-                    // Probeer het antwoord van het script als JSON te lezen
-                    return response.json();
                 }) // Closing brace 4 (.then for response)
-                .then(data => { // Opening brace 5 (.then for data)
-                    // Verwerk het JSON antwoord van het Apps Script
-                    console.log('Success response from Apps Script:', data);
-                    if (data.status === "success") {
+                .then(data => { // Opening brace 5 (.then for data processing)
+                    // Verwerk het JSON antwoord van Formspree
+                    console.log('Success response from Formspree:', data);
+                    // Formspree stuurt vaak { "ok": true } of { "success": "..." } terug
+                    if (data.ok || data.success) {
                         // Toon succesbericht
-                        scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol ingediend!`;
+                        scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol verzonden!`;
                         // Verberg/verwijder de submit knop
                         submitScoreButton.classList.add('hide');
                         submitScoreButton.remove(); // Verwijder uit DOM
                         resetButton.disabled = false; // Maak reset knop weer actief
                     } else {
-                        // Er was een fout volgens het Apps Script zelf
-                        throw new Error(data.message || "Onbekende fout van server ontvangen (status niet 'success').");
+                        // Er was een fout volgens Formspree zelf (bv. validatiefout daar)
+                        throw new Error(data.error || "Onbekende fout van Formspree ontvangen.");
                     }
-                }) // Closing brace 5 (.then for data)
-                .catch((error) => { // Opening brace 6 (.catch)
+                }) // Closing brace 5 (.then for data processing)
+                .catch((error) => { // Opening brace 6 (.catch for all errors)
                     // Vang alle fouten op (netwerk of verwerking)
                     console.error('Error tijdens fetch of verwerking!', error);
-                    // Geef een duidelijkere melding, inclusief de error message
                     alert(`Er ging iets mis bij het indienen van de score:\n${error.message}\n\nControleer je internetverbinding en probeer het eventueel opnieuw.`);
                      // Zet knoppen terug naar beginstaat bij fout
                      submitScoreButton.innerText = 'Score Indienen';
                      submitScoreButton.disabled = false;
                      resetButton.disabled = false; // Maak reset knop weer actief
                 }); // Closing brace 6 (.catch)
-            }; // Closing brace 1 (onclick callback)
+            }; // <<< EINDE VERVANGING (deze puntkomma hoort erbij)
 
 
             // Voeg de 'Indienen' knop toe aan de score container
