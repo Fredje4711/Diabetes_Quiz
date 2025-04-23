@@ -17,27 +17,18 @@
 
         #quiz-container {
             background-color: #fff;
-            /* --- AFSTAND 2 --- */
-            /* De 'padding' hier bepaalt de interne ruimte van de container. */
-            /* De BOVENSTE padding (25px) beïnvloedt Afstand 2. */
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             max-width: 700px;
             width: 90%;
-            /* --- AFSTAND 1 & 4 --- */
-            /* De 'margin' bepaalt de externe ruimte rond de container. */
-            /* De EERSTE waarde (20px) is de BOVENMARGE (Afstand 1). */
-            /* De DERDE waarde (5px) is de ONDERMARGE (Deel van Afstand 4). */
-            margin: 0px auto 0px auto; /* NIEUW: Kleinere ondermarge */
+            margin: 0px auto 0px auto; /* Kleinere ondermarge */
         }
 
         h1 {
             color: #23a9e4;
             text-align: center;
-            margin-top: 0; /* H1 heeft geen eigen bovenmarge */
-            /* --- AFSTAND 3 --- */
-            /* De 'margin-bottom' hier bepaalt de ruimte ONDER de H1 (Afstand 3). */
+            margin-top: 0;
             margin-bottom: 0px;
         }
 
@@ -116,7 +107,7 @@
 
         #controls {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 40px; /* Meer ruimte boven knoppen */
         }
 
         #next-btn, #reset-btn {
@@ -135,13 +126,30 @@
             background-color: #1a8cd1;
         }
 
+        /* Stijl voor de nieuwe stop knop */
+        #stop-quiz-btn {
+             padding: 10px 25px;
+             background-color: #dc3545; /* Rood */
+             color: white;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             font-size: 1em;
+             margin-top: 15px; /* Gelijk aan andere knoppen */
+             margin-left: 10px; /* Ruimte naast andere knoppen */
+        }
+         #stop-quiz-btn:hover {
+             background-color: #c82333;
+         }
+
+
         .hide {
             display: none;
         }
 
          #progress-text {
              text-align: center;
-             margin-bottom: 15px; /* Ruimte onder de progress text */
+             margin-bottom: 15px;
              font-style: italic;
              color: #555;
          }
@@ -156,10 +164,7 @@
 
         footer {
             text-align: center;
-            /* --- AFSTAND 4 --- */
-            /* De 'margin-top' hier bepaalt de ruimte BOVEN de footer. */
-            /* Samen met de margin-bottom van #quiz-container bepaalt dit Afstand 4. */
-            margin-top: -5px; /* NIEUW: Kleinere bovenmarge */
+            margin-top: -5px;
             padding: 15px;
             border-top: 1px solid #eee;
             color: #666;
@@ -203,10 +208,10 @@
 <div id="name-entry" style="text-align: center; margin-bottom: 20px; background-color: #fff; padding: 20px; max-width: 700px; width: 90%; margin: 20px auto 0 auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
     <label for="participant-name" style="display: block; margin-bottom: 8px; font-weight: bold;">Voer je naam in:</label>
     <input type="text" id="participant-name" name="participant-name" required style="padding: 10px; width: 80%; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
-    <button id="start-quiz-btn" style="padding: 10px 25px; background-color: #23a9e4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em;" disabled>Start Quiz</button> 
+    <button id="start-quiz-btn" style="padding: 10px 25px; background-color: #23a9e4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em;" disabled>Start Quiz</button>
 </div>
 <!-- EINDE NIEUWE CODE VOOR NAAM INVOER -->
-	
+
 	<div id="quiz-container" class="hide">
         <h1>Diabetes Quiz</h1>
         <div id="progress-text">Vraag 1 van 50</div> <!-- Progress indicator -->
@@ -216,18 +221,19 @@
             <div id="answers">
                 <!-- Antwoordknoppen worden hier door JavaScript ingevoegd -->
             </div>
-            <div id="feedback" class="hide"></div> <!-- Standaard verborgen -->
+            <div id="feedback" class="hide feedback"></div> <!-- Standaard verborgen -->
         </div>
 
         <div id="score-container" class="hide">
              <h2>Je score</h2>
              <p id="score-text"></p>
+             <!-- Knoppen worden hier door JS ingevoegd -->
         </div>
 
 
-        <div id="controls">
+        <div id="controls" class="hide"> <!-- Standaard verborgen -->
             <button id="next-btn" class="hide">Volgende Vraag</button>
-            <button id="reset-btn" class="hide">Opnieuw Beginnen</button>
+            <!-- Reset knop wordt nu in score container getoond -->
         </div>
     </div>
 
@@ -235,11 +241,11 @@
         <p>Auteur: Diabetes Liga Midden-Limburg</p>
         <p>
             <a href="https://www.dlml.be" target="_blank">
-                <!-- Gebruik de emoji -->
                 <span style="color: #23a9e4;">🌐</span>
                 www.dlml.be
             </a>
         </p>
+        <!-- Hier kan het bedankbericht komen -->
     </footer>
 
     <script>
@@ -370,6 +376,8 @@
             // Ruim eventuele oude knoppen op uit score container
             const oldSubmitBtn = document.getElementById('submit-score-btn');
             if (oldSubmitBtn) oldSubmitBtn.remove();
+            const oldStopBtn = document.getElementById('stop-quiz-btn'); // Ruim ook stop knop op
+             if(oldStopBtn) oldStopBtn.remove();
 
             controlsDiv.classList.add('hide'); // Verberg controls div (met next/reset) initieel
             resetButton.classList.add('hide'); // Zorg dat reset knop verborgen is
@@ -484,20 +492,20 @@
             // --- NIEUWE ACTIE: Stuur data direct naar Formspree ---
             submitScoreButton.onclick = () => { // Opening brace 1 (onclick callback)
                 // --- BELANGRIJK: Plak hier JOUW Formspree Endpoint URL ---
-                const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< VERVANG DEZE REGEL MET JOUW URL
+                 const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< Jouw Formspree URL hier!
                 // --- EINDE BELANGRIJK ---
 
-                 // Check of de URL placeholder nog aanwezig is (of leeg is)
-                 if (formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || !formspreeURL || formspreeURL.trim() === "") {
+                 // Check of de URL placeholder nog aanwezig is (of leeg is) - Aangepast voor duidelijkheid
+                 if (!formspreeURL || formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || formspreeURL.trim() === "") {
                      alert("Fout: De Formspree URL is nog niet (correct) ingesteld in de code!");
                      return; // Stop als URL ontbreekt
                  }
 
                 // De data die we willen sturen
                 const dataToSend = {
-                    naam: participantName, // Gebruik 'naam' zoals in je Google Form, Formspree pikt dit op
-                    score: score,
-                    quiz_titel: "Diabetes Quiz (50 Vragen)" // Extra info meesturen kan handig zijn
+                    naam: participantName, // Veldnaam 'naam'
+                    score: score,          // Veldnaam 'score'
+                    quiz_titel: "Diabetes Quiz (50 Vragen)" // Extra veld
                 };
 
                 console.log("Score indienen - Data verzenden naar Formspree:", dataToSend);
@@ -505,7 +513,7 @@
                 // Knoppen aanpassen tijdens verzenden
                 submitScoreButton.innerText = 'Bezig met indienen...';
                 submitScoreButton.disabled = true;
-                resetButton.disabled = true; // Ook de reset knop even uitschakelen
+                resetButton.disabled = true;
 
                 // Gebruik fetch om de data te POSTen naar Formspree
                 fetch(formspreeURL, { // Opening brace 2 (fetch options object)
@@ -520,45 +528,35 @@
                 .then(response => { // Opening brace 4 (.then for response)
                     // Check of het netwerk antwoord OK is (status 2xx)
                     if (response.ok) {
-                       // Als Formspree een OK status teruggeeft, parse het antwoord
-                       return response.json();
+                       return response.json(); // Als OK, parse het JSON antwoord
                     } else {
-                       // Als er een HTTP error is (4xx, 5xx), probeer de fout te lezen
+                       // Als niet OK, probeer error te lezen
                        return response.json().then(errorData => {
-                           // Gooi een error met de info van Formspree indien mogelijk
                            throw new Error(`Formspree error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : (errorData.error || response.statusText)} (status: ${response.status})`);
-                       }).catch(() => {
-                           // Fallback als de error body geen JSON is
+                       }).catch(() => { // Fallback als error geen JSON is
                            throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status})`);
                        });
                     }
                 }) // Closing brace 4 (.then for response)
                 .then(data => { // Opening brace 5 (.then for data processing)
-                    // Verwerk het JSON antwoord van Formspree
                     console.log('Success response from Formspree:', data);
-                    // Formspree stuurt vaak { "ok": true } of { "success": "..." } terug
-                    if (data.ok || data.success) {
-                        // Toon succesbericht
+                    if (data.ok || data.success) { // Check op Formspree succes response
                         scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol verzonden!`;
-                        // Verberg/verwijder de submit knop
                         submitScoreButton.classList.add('hide');
-                        submitScoreButton.remove(); // Verwijder uit DOM
-                        resetButton.disabled = false; // Maak reset knop weer actief
-                    } else {
-                        // Er was een fout volgens Formspree zelf (bv. validatiefout daar)
+                        submitScoreButton.remove();
+                        resetButton.disabled = false; // Reset knop weer actief maken
+                    } else { // Fout volgens Formspree
                         throw new Error(data.error || "Onbekende fout van Formspree ontvangen.");
                     }
                 }) // Closing brace 5 (.then for data processing)
                 .catch((error) => { // Opening brace 6 (.catch for all errors)
-                    // Vang alle fouten op (netwerk of verwerking)
                     console.error('Error tijdens fetch of verwerking!', error);
                     alert(`Er ging iets mis bij het indienen van de score:\n${error.message}\n\nControleer je internetverbinding en probeer het eventueel opnieuw.`);
-                     // Zet knoppen terug naar beginstaat bij fout
-                     submitScoreButton.innerText = 'Score Indienen';
+                     submitScoreButton.innerText = 'Score Indienen'; // Zet knop terug bij fout
                      submitScoreButton.disabled = false;
-                     resetButton.disabled = false; // Maak reset knop weer actief
+                     resetButton.disabled = false; // Reset knop weer actief maken
                 }); // Closing brace 6 (.catch)
-            }; // <<< EINDE VERVANGING (deze puntkomma hoort erbij)
+            }; // Closing brace 1 (onclick callback)
 
 
             // Voeg de 'Indienen' knop toe aan de score container
@@ -567,7 +565,44 @@
             // Zorg dat de 'Opnieuw Beginnen' knop ook in de score container komt te staan
             resetButton.classList.remove('hide'); // Maak hem zichtbaar
             scoreContainer.appendChild(resetButton); // Voeg hem toe aan de score container
-        }
+
+            // --- START NIEUWE CODE: Knop om te stoppen ---
+            const stopButton = document.createElement('button');
+            stopButton.innerText = 'Quiz Afsluiten';
+            stopButton.id = 'stop-quiz-btn'; // Gebruik CSS ID voor styling
+
+            // Actie voor de stop knop
+            stopButton.onclick = () => {
+                console.log("Stop knop geklikt.");
+                // Verberg de quiz en score containers
+                quizContainer.classList.add('hide');
+                scoreContainer.classList.add('hide');
+                nameEntryContainer.classList.add('hide'); // Verberg naam invoer ook
+
+                // Toon een bedankbericht in de footer
+                const footer = document.querySelector('footer');
+                const thankYouMessage = document.createElement('p');
+                thankYouMessage.id = 'thank-you-msg';
+                thankYouMessage.style.fontWeight = 'bold';
+                thankYouMessage.style.marginTop = '30px';
+                thankYouMessage.textContent = 'Bedankt voor uw deelname!';
+
+                // Verwijder eventueel oud bedankbericht eerst
+                const oldThankYouMsg = document.getElementById('thank-you-msg');
+                if(oldThankYouMsg) oldThankYouMsg.remove();
+
+                // Voeg het nieuwe bericht toe
+                footer.appendChild(thankYouMessage);
+
+                // Scroll naar boven
+                window.scrollTo(0, 0);
+            };
+
+            // Voeg de 'Stoppen' knop toe aan de score container
+            scoreContainer.appendChild(stopButton);
+            // --- EINDE NIEUWE CODE VOOR STOPPEN ---
+
+        } // Einde showScore() functie
 
         // --- Event Listeners ---
         nextButton.addEventListener('click', handleNextButton); // Voor 'Volgende Vraag' / 'Bekijk Score'
@@ -580,9 +615,17 @@
             quizContainer.classList.add('hide');
             scoreContainer.classList.add('hide');
 
+             // Verwijder eventueel bedankbericht uit footer  // <<< Correctie toegevoegd
+             const oldThankYouMsg = document.getElementById('thank-you-msg');
+             if(oldThankYouMsg) oldThankYouMsg.remove();
+
             // Verwijder eventuele submit knop uit score container
             const oldSubmitBtn = document.getElementById('submit-score-btn');
             if (oldSubmitBtn) oldSubmitBtn.remove();
+            // Verwijder eventuele stop knop
+            const oldStopBtn = document.getElementById('stop-quiz-btn');
+             if(oldStopBtn) oldStopBtn.remove();
+
 
             // Verberg de controls div (met next button)
              controlsDiv.classList.add('hide');
