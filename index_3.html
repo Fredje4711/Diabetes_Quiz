@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Quiz (50 Vragen)</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px; /* Behoud padding voor ruimte aan randen */
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        #quiz-container {
+            background-color: #fff;
+            /* --- AFSTAND 2 --- */
+            /* De 'padding' hier bepaalt de interne ruimte van de container. */
+            /* De BOVENSTE padding (25px) beïnvloedt Afstand 2. */
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 90%;
+            /* --- AFSTAND 1 & 4 --- */
+            /* De 'margin' bepaalt de externe ruimte rond de container. */
+            /* De EERSTE waarde (20px) is de BOVENMARGE (Afstand 1). */
+            /* De DERDE waarde (5px) is de ONDERMARGE (Deel van Afstand 4). */
+            margin: 0px auto 0px auto; /* NIEUW: Kleinere ondermarge */
+        }
+
+        h1 {
+            color: #23a9e4;
+            text-align: center;
+            margin-top: 0; /* H1 heeft geen eigen bovenmarge */
+            /* --- AFSTAND 3 --- */
+            /* De 'margin-bottom' hier bepaalt de ruimte ONDER de H1 (Afstand 3). */
+            margin-bottom: 0px;
+        }
+
+        #question-container {
+            margin-bottom: 20px;
+        }
+
+        #question {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        #answers button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #e6f7ff;
+            border: 1px solid #23a9e4;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1em;
+            transition: background-color 0.3s, border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        #answers button:hover:not([disabled]) {
+            background-color: #cceeff;
+            border-color: #1a8cd1;
+        }
+
+        #answers button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        #answers button.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        #answers button.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        #answers button.selected-incorrect {
+             border-width: 2px;
+        }
+
+
+        #feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 1.2em;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        #feedback.correct {
+            color: #155724;
+            background-color: #d4edda;
+        }
+
+        #feedback.incorrect {
+            color: #721c24;
+            background-color: #f8d7da;
+        }
+
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #next-btn, #reset-btn {
+            padding: 10px 25px;
+            background-color: #23a9e4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+
+        #next-btn:hover, #reset-btn:hover {
+            background-color: #1a8cd1;
+        }
+
+        .hide {
+            display: none;
+        }
+
+         #progress-text {
+             text-align: center;
+             margin-bottom: 15px; /* Ruimte onder de progress text */
+             font-style: italic;
+             color: #555;
+         }
+
+         #score-container {
+             text-align: center;
+         }
+         #score-container h2{
+             color: #23a9e4;
+         }
+
+
+        footer {
+            text-align: center;
+            /* --- AFSTAND 4 --- */
+            /* De 'margin-top' hier bepaalt de ruimte BOVEN de footer. */
+            /* Samen met de margin-bottom van #quiz-container bepaalt dit Afstand 4. */
+            margin-top: -5px; /* NIEUW: Kleinere bovenmarge */
+            padding: 15px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9em;
+             box-sizing: border-box;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+         footer a {
+            color: #23a9e4;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+        }
+
+         footer a:hover {
+             text-decoration: underline;
+         }
+
+        footer span {
+            margin-right: 4px;
+            color: #23a9e4;
+            line-height: 1;
+        }
+
+        footer img {
+             width: 16px;
+             height: 16px;
+             margin-right: 4px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <!-- START NIEUWE CODE VOOR NAAM INVOER -->
+<div id="name-entry" style="text-align: center; margin-bottom: 20px; background-color: #fff; padding: 20px; max-width: 700px; width: 90%; margin: 20px auto 0 auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+    <label for="participant-name" style="display: block; margin-bottom: 8px; font-weight: bold;">Voer je naam in:</label>
+    <input type="text" id="participant-name" name="participant-name" required style="padding: 10px; width: 80%; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+    <button id="start-quiz-btn" style="padding: 10px 25px; background-color: #23a9e4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em;" disabled>Start Quiz</button> 
+</div>
+<!-- EINDE NIEUWE CODE VOOR NAAM INVOER -->
+	
+	<div id="quiz-container" class="hide">
+        <h1>Diabetes Quiz</h1>
+        <div id="progress-text">Vraag 1 van 50</div> <!-- Progress indicator -->
+
+        <div id="question-container">
+            <div id="question">Vraag wordt geladen...</div>
+            <div id="answers">
+                <!-- Antwoordknoppen worden hier door JavaScript ingevoegd -->
+            </div>
+            <div id="feedback" class="hide"></div> <!-- Standaard verborgen -->
+        </div>
+
+        <div id="score-container" class="hide">
+             <h2>Je score</h2>
+             <p id="score-text"></p>
+        </div>
+
+
+        <div id="controls">
+            <button id="next-btn" class="hide">Volgende Vraag</button>
+            <button id="reset-btn" class="hide">Opnieuw Beginnen</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Auteur: Diabetes Liga Midden-Limburg</p>
+        <p>
+            <a href="https://www.dlml.be" target="_blank">
+                <!-- Gebruik de emoji -->
+                <span style="color: #23a9e4;">🌐</span>
+                www.dlml.be
+            </a>
+        </p>
+    </footer>
+
+    <script>
+
+        // --- Quiz Data (50 Vragen - CONTROLEER OP JUISTHEID!) ---
+        const quizData = [
+            // ... (jouw 50 vragen hier - ongewijzigd) ...
+            { question: "Wat is de meest voorkomende vorm van diabetes?", answers: ["Diabetes Type 1", "Diabetes Type 2", "Zwangerschapsdiabetes", "MODY"], correctAnswer: "Diabetes Type 2" },
+            { question: "Welk hormoon reguleert de bloedsuikerspiegel door glucose uit het bloed op te nemen?", answers: ["Glucagon", "Adrenaline", "Insuline", "Cortisol"], correctAnswer: "Insuline" },
+            { question: "Wat is een veelvoorkomend symptoom van onbehandelde diabetes?", answers: ["Gewichtstoename", "Veel dorst en vaak plassen", "Lage bloeddruk", "Energieoverschot"], correctAnswer: "Veel dorst en vaak plassen" },
+            { question: "Wat is de belangrijkste oorzaak van Diabetes Type 1?", answers: ["Ongezonde voeding", "Auto-immuunreactie", "Overgewicht", "Te weinig beweging"], correctAnswer: "Auto-immuunreactie" },
+            { question: "Welke term beschrijft een te lage bloedsuikerspiegel?", answers: ["Hyperglykemie", "Ketoacidose", "Hypoglykemie", "Insulineresistentie"], correctAnswer: "Hypoglykemie" },
+            { question: "Wat is een belangrijke risicofactor voor het ontwikkelen van Diabetes Type 2?", answers: ["Ondergewicht", "Jonge leeftijd", "Overgewicht en weinig beweging", "Blootstelling aan kou"], correctAnswer: "Overgewicht en weinig beweging" },
+            { question: "Welk orgaan produceert insuline?", answers: ["Lever", "Nieren", "Alvleesklier (Pancreas)", "Milt"], correctAnswer: "Alvleesklier (Pancreas)" },
+            { question: "Wat meet de HbA1c-test?", answers: ["De bloedsuiker op één moment", "Het cholesterolgehalte", "De gemiddelde bloedsuiker over de laatste 2-3 maanden", "De nierfunctie"], correctAnswer: "De gemiddelde bloedsuiker over de laatste 2-3 maanden" },
+            { question: "Wat is een mogelijke lange-termijn complicatie van diabetes?", answers: ["Verbeterd zicht", "Snellere wondgenezing", "Nierschade (Nefropathie)", "Verhoogde spiermassa"], correctAnswer: "Nierschade (Nefropathie)" },
+            { question: "Wat is een gezonde gewoonte voor mensen met diabetes?", answers: ["Regelmatig maaltijden overslaan", "Veel suikerhoudende dranken drinken", "Regelmatige lichaamsbeweging", "Een zittende levensstijl"], correctAnswer: "Regelmatige lichaamsbeweging" },
+            { question: "Wat betekent 'insulineresistentie', vaak geassocieerd met Type 2 diabetes?", answers: ["Het lichaam maakt te veel insuline aan.", "Het lichaam reageert niet goed meer op insuline.", "Het lichaam heeft een allergie voor insuline.", "Het lichaam breekt insuline te snel af."], correctAnswer: "Het lichaam reageert niet goed meer op insuline." },
+            { question: "Welk type diabetes ontstaat soms tijdens de zwangerschap?", answers: ["MODY", "LADA", "Diabetes Type 1", "Zwangerschapsdiabetes"], correctAnswer: "Zwangerschapsdiabetes" },
+            { question: "Wat is een 'hypo'?", answers: ["Een te hoge bloedsuiker", "Een aanval van hoofdpijn", "Een te lage bloedsuiker", "Een type insuline"], correctAnswer: "Een te lage bloedsuiker" },
+            { question: "Welke voedingsstof heeft de grootste directe invloed op de bloedsuikerspiegel?", answers: ["Eiwitten", "Vetten", "Koolhydraten", "Vitamines"], correctAnswer: "Koolhydraten" },
+            { question: "Wat is doorgaans géén symptoom van Diabetes Type 1 bij diagnose?", answers: ["Onverklaarbaar gewichtsverlies", "Extreme dorst", "Langzame, geleidelijke gewichtstoename", "Vaak moeten plassen"], correctAnswer: "Langzame, geleidelijke gewichtstoename" },
+            // Nieuwe 35 vragen
+            { question: "Welke complicatie van diabetes beïnvloedt de zenuwen, vaak in voeten en handen?", answers: ["Retinopathie", "Nefropathie", "Neuropathie", "Cardiomyopathie"], correctAnswer: "Neuropathie"},
+            { question: "Waarom is regelmatige voetcontrole belangrijk bij diabetes?", answers: ["Om eelt te verwijderen", "Vanwege verminderd gevoel en slechtere wondgenezing", "Omdat voeten sneller groeien", "Om de bloeddruk te meten"], correctAnswer: "Vanwege verminderd gevoel en slechtere wondgenezing"},
+            { question: "Wat is de afkorting voor 'Continuous Glucose Monitoring'?", answers: ["CGM", "BGM", "HbA1c", "DKA"], correctAnswer: "CGM"},
+            { question: "Wat is het doel van het tellen van koolhydraten?", answers: ["Om af te vallen", "Om de insulinedosis beter af te stemmen op de maaltijd", "Om meer eiwitten te eten", "Om vetten te vermijden"], correctAnswer: "Om de insulinedosis beter af te stemmen op de maaltijd"},
+            { question: "Welk type vet wordt over het algemeen aangeraden te beperken?", answers: ["Onverzadigd vet", "Meervoudig onverzadigd vet", "Verzadigd vet en transvet", "Omega-3 vetzuren"], correctAnswer: "Verzadigd vet en transvet"},
+            { question: "Wat kan helpen om de insulinegevoeligheid te verbeteren?", answers: ["Meer suiker eten", "Minder slapen", "Regelmatig bewegen en gewichtsverlies", "Meer zout gebruiken"], correctAnswer: "Regelmatig bewegen en gewichtsverlies"},
+            { question: "Wat is LADA (Latent Autoimmune Diabetes in Adults)?", answers: ["Een snel ontwikkelende vorm van Type 1 bij kinderen", "Een vorm van zwangerschapsdiabetes", "Een langzaam ontwikkelende auto-immuun diabetes bij volwassenen", "Een synoniem voor Type 2 diabetes"], correctAnswer: "Een langzaam ontwikkelende auto-immuun diabetes bij volwassenen"},
+            { question: "Wat moet je direct doen bij een ernstige hypo waarbij iemand bewusteloos is?", answers: ["Insuline injecteren", "Water laten drinken", "Niets in de mond stoppen en 112 bellen (en evt. glucagon toedienen)", "Suiker in de mond wrijven"], correctAnswer: "Niets in de mond stoppen en 112 bellen (en evt. glucagon toedienen)"},
+            { question: "Welke van deze dranken is meestal de beste keuze voor hydratatie bij diabetes?", answers: ["Vruchtensap", "Cola met suiker", "Water of thee zonder suiker", "Energiedrank"], correctAnswer: "Water of thee zonder suiker"},
+            { question: "Wat is het effect van stresshormonen (zoals cortisol) op de bloedsuiker?", answers: ["Ze verlagen de bloedsuiker altijd", "Ze hebben geen effect op de bloedsuiker", "Ze kunnen de bloedsuiker verhogen", "Ze verbeteren de insulinegevoeligheid"], correctAnswer: "Ze kunnen de bloedsuiker verhogen"},
+            { question: "Wat is een kenmerk van MODY (Maturity Onset Diabetes of the Young)?", answers: ["Het is altijd Type 1", "Het wordt veroorzaakt door overgewicht", "Het heeft een sterke erfelijke component (genetische mutatie)", "Het begint altijd na het 50e levensjaar"], correctAnswer: "Het heeft een sterke erfelijke component (genetische mutatie)"},
+            { question: "Wat is een 'hyper'?", answers: ["Een te lage bloedsuiker", "Een allergische reactie", "Een te hoge bloedsuiker", "Een snelle hartslag"], correctAnswer: "Een te hoge bloedsuiker"},
+            { question: "Welke complicatie van diabetes treft de ogen?", answers: ["Neuropathie", "Retinopathie", "Nefropathie", "Gastroparese"], correctAnswer: "Retinopathie"},
+            { question: "Wat is het primaire doel van een insulinepomp?", answers: ["Bloedsuiker meten", "Continu insuline afgeven en bolussen voor maaltijden", "Alleen langwerkende insuline geven", "Koolhydraten tellen"], correctAnswer: "Continu insuline afgeven en bolussen voor maaltijden"},
+            { question: "Is diabetes besmettelijk?", answers: ["Ja, via direct contact", "Ja, via de lucht", "Nee, diabetes is niet besmettelijk", "Alleen Type 1 is besmettelijk"], correctAnswer: "Nee, diabetes is niet besmettelijk"},
+            { question: "Wat is 'prediabetes'?", answers: ["Een garantie dat je Type 2 krijgt", "Een voorstadium waarbij bloedsuikerwaarden verhoogd zijn", "Een andere naam voor Type 1", "Diabetes die vanzelf overgaat"], correctAnswer: "Een voorstadium waarbij bloedsuikerwaarden verhoogd zijn"},
+            { question: "Welk advies geldt meestal voor alcoholgebruik bij diabetes?", answers: ["Onbeperkt drinken is prima", "Alleen sterke drank is toegestaan", "Drink met mate en niet op een lege maag", "Alcohol verlaagt nooit de bloedsuiker"], correctAnswer: "Drink met mate en niet op een lege maag"},
+            { question: "Wat is een belangrijk onderdeel van de behandeling van Type 1 diabetes?", answers: ["Alleen dieet", "Alleen lichaamsbeweging", "Insulinetherapie (injecties of pomp)", "Alleen orale medicatie"], correctAnswer: "Insulinetherapie (injecties of pomp)"},
+            { question: "Welke risicofactor voor Type 2 diabetes kun je NIET beïnvloeden?", answers: ["Gewicht", "Lichaamsbeweging", "Voeding", "Leeftijd en genetische aanleg"], correctAnswer: "Leeftijd en genetische aanleg"},
+            { question: "Wat gebeurt er bij Diabetische Ketoacidose (DKA)?", answers: ["De bloedsuiker wordt extreem laag", "Het lichaam verzuurt door aanmaak van ketonen bij insulinetekort", "De nieren werken te goed", "Er wordt te veel insuline geproduceerd"], correctAnswer: "Het lichaam verzuurt door aanmaak van ketonen bij insulinetekort"},
+            { question: "Welk type product bevat vaak 'verborgen' suikers?", answers: ["Water", "Verse groenten", "Bewerkte voedingsmiddelen zoals sauzen en kant-en-klaarmaaltijden", "Ongezoete noten"], correctAnswer: "Bewerkte voedingsmiddelen zoals sauzen en kant-en-klaarmaaltijden"},
+            { question: "Wat is de glycemische index (GI)?", answers: ["Een maat voor de hoeveelheid calorieën", "Een maat voor hoe snel koolhydraten de bloedsuiker verhogen", "Een maat voor de hoeveelheid vet", "Een maat voor de hoeveelheid eiwit"], correctAnswer: "Een maat voor hoe snel koolhydraten de bloedsuiker verhogen"},
+            { question: "Wat is een kenmerk van vezelrijke voeding?", answers: ["Het verhoogt de bloedsuiker snel", "Het kan helpen de bloedsuiker stabieler te houden", "Het bevat meestal veel verzadigd vet", "Het is alleen te vinden in vlees"], correctAnswer: "Het kan helpen de bloedsuiker stabieler te houden"},
+            { question: "Wat is het risico van roken voor mensen met diabetes?", answers: ["Het verlaagt de bloedsuiker", "Het heeft geen extra risico", "Het verhoogt het risico op hart- en vaatziekten aanzienlijk", "Het verbetert de bloedcirculatie"], correctAnswer: "Het verhoogt het risico op hart- en vaatziekten aanzienlijk"},
+            { question: "Welke professional is gespecialiseerd in voetproblemen bij diabetes?", answers: ["Opticien", "Diëtist", "Podotherapeut", "Psycholoog"], correctAnswer: "Podotherapeut"},
+            { question: "Kan Type 2 diabetes soms in remissie gaan?", answers: ["Nee, nooit", "Ja, soms door significante leefstijlverandering en gewichtsverlies", "Alleen met medicijnen", "Alleen bij kinderen"], correctAnswer: "Ja, soms door significante leefstijlverandering en gewichtsverlies"},
+            { question: "Wat is het belangrijkste verschil tussen Diabetes Mellitus en Diabetes Insipidus?", answers: ["Mellitus betreft bloedsuiker, Insipidus betreft vochtbalans (ADH)", "Insipidus is de Latijnse naam voor Mellitus", "Mellitus is milder dan Insipidus", "Insipidus wordt veroorzaakt door suiker"], correctAnswer: "Mellitus betreft bloedsuiker, Insipidus betreft vochtbalans (ADH)"},
+            { question: "Wat is een mogelijke oorzaak van wazig zien bij diabetes?", answers: ["Te lage bloeddruk", "Veranderingen in vochtbalans in de ooglens door hoge bloedsuiker", "Te veel vitamine A", "Stress"], correctAnswer: "Veranderingen in vochtbalans in de ooglens door hoge bloedsuiker"},
+            { question: "Welke soort insuline werkt het snelst?", answers: ["Langwerkende insuline", "Mix-insuline", "Ultra-kortwerkende insuline", "Intermediair werkende insuline"], correctAnswer: "Ultra-kortwerkende insuline"},
+            { question: "Wat is een 'kunstmatige alvleesklier' of 'closed-loop' systeem?", answers: ["Een orgaantransplantatie", "Een app om koolhydraten te tellen", "Een systeem dat CGM en insulinepomp combineert voor automatische dosering", "Een nieuwe soort orale medicatie"], correctAnswer: "Een systeem dat CGM en insulinepomp combineert voor automatische dosering"},
+            { question: "Welk effect heeft regelmatige krachttraining op diabetesmanagement?", answers: ["Het verhoogt de insulineresistentie", "Het verbetert de insulinegevoeligheid en spiermassa", "Het heeft geen effect", "Het is afgeraden bij diabetes"], correctAnswer: "Het verbetert de insulinegevoeligheid en spiermassa"},
+            { question: "Wat is de functie van glucagon?", answers: ["Het verlaagt de bloedsuiker", "Het verhoogt de bloedsuiker (o.a. door leverglucose vrij te maken)", "Het reguleert de bloeddruk", "Het helpt bij de spijsvertering"], correctAnswer: "Het verhoogt de bloedsuiker (o.a. door leverglucose vrij te maken)"},
+            { question: "Wat is belangrijk bij het reizen met diabetes en insuline?", answers: ["Insuline in de ruimbagage doen", "Geen extra voorraad meenemen", "Insuline in handbagage houden en evt. een medische verklaring meenemen", "Stoppen met meten tijdens de reis"], correctAnswer: "Insuline in handbagage houden en evt. een medische verklaring meenemen"},
+            { question: "Wat is een symptoom van diabetische nefropathie (nierschade) in een later stadium?", answers: ["Gewichtstoename door vocht vasthouden", "Droge huid", "Snelle hartslag", "Helder zicht"], correctAnswer: "Gewichtstoename door vocht vasthouden"},
+            { question: "Wat is een 'bolus' bij insulinetherapie?", answers: ["De continue basale insulineafgifte", "Een extra dosis insuline voor een maaltijd of correctie", "Een meting van de bloedsuiker", "Een type sensor"], correctAnswer: "Een extra dosis insuline voor een maaltijd of correctie"}
+        ];
+
+        // --- START BLOK QUIZ STATE ---
+        let currentQuestionIndex;
+        let score;
+        let shuffledQuestions;
+        let participantName = ''; // Globale variabele voor naam
+        // --- EINDE BLOK QUIZ STATE ---
+
+        // --- START BLOK DOM ELEMENTEN & STARTKNOP LOGICA ---
+        // --- DOM Elementen ---
+        const quizContainer = document.getElementById('quiz-container');
+        const progressText = document.getElementById('progress-text');
+        const questionContainer = document.getElementById('question-container');
+        const questionElement = document.getElementById('question');
+        const answersElement = document.getElementById('answers');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const resetButton = document.getElementById('reset-btn');
+        const scoreContainer = document.getElementById('score-container');
+        const scoreTextElement = document.getElementById('score-text');
+        const nameEntryContainer = document.getElementById('name-entry');
+        const nameInput = document.getElementById('participant-name');
+        const startQuizButton = document.getElementById('start-quiz-btn');
+        const controlsDiv = document.getElementById('controls'); // Selecteer controls div
+
+        // --- Logica om Start knop te activeren/deactiveren ---
+        nameInput.addEventListener('input', () => {
+            if (nameInput.value.trim() !== '') {
+                startQuizButton.disabled = false;
+            } else {
+                startQuizButton.disabled = true;
+            }
+        });
+
+        // --- Code voor de Start knop (Klik Actie) ---
+        startQuizButton.addEventListener('click', () => {
+            console.log("Start Quiz knop geklikt!"); // Debug log
+            participantName = nameInput.value.trim();
+            if (participantName === '') {
+                alert('Vul alsjeblieft je naam in.');
+                return;
+            }
+            nameEntryContainer.classList.add('hide');
+            quizContainer.classList.remove('hide');
+            startQuiz(); // Start de quiz
+        });
+        // --- EINDE BLOK DOM ELEMENTEN & STARTKNOP LOGICA ---
+
+
+        // --- Functies ---
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz() {
+            console.log("startQuiz functie aangeroepen!"); // Debug log
+            console.log("Starting quiz for:", participantName);
+            currentQuestionIndex = 0;
+            score = 0;
+            shuffledQuestions = shuffleArray([...quizData]);
+            scoreContainer.classList.add('hide'); // Verberg score container
+            questionContainer.classList.remove('hide'); // Toon vragen container
+
+            // Ruim eventuele oude knoppen op uit score container
+            const oldSubmitBtn = document.getElementById('submit-score-btn');
+            if (oldSubmitBtn) oldSubmitBtn.remove();
+
+            controlsDiv.classList.add('hide'); // Verberg controls div (met next/reset) initieel
+            resetButton.classList.add('hide'); // Zorg dat reset knop verborgen is
+            nextButton.classList.add('hide'); // Zorg dat next knop verborgen is
+            feedbackElement.classList.add('hide');
+            progressText.classList.remove('hide');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            progressText.textContent = `Vraag ${currentQuestionIndex + 1} van ${shuffledQuestions.length}`;
+
+            const shuffledAnswers = shuffleArray([...currentQuestion.answers]);
+            shuffledAnswers.forEach(answer => {
+                const button = document.createElement('button');
+                button.textContent = answer;
+                button.addEventListener('click', selectAnswer);
+                answersElement.appendChild(button);
+            });
+            console.log(`Showing question ${currentQuestionIndex + 1}: "${currentQuestion.question}"`);
+        }
+
+        function resetState() {
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'hide feedback'; // Gebruik beide classes
+            nextButton.classList.add('hide'); // Verberg 'Volgende'
+            while (answersElement.firstChild) {
+                answersElement.removeChild(answersElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const selectedAnswer = selectedButton.textContent;
+            const correctAnswer = shuffledQuestions[currentQuestionIndex].correctAnswer;
+
+            console.log(`Answer selected: "${selectedAnswer}". Correct answer: "${correctAnswer}"`);
+
+            Array.from(answersElement.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                }
+            });
+
+            feedbackElement.classList.remove('hide');
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                console.log("Correct! Score:", score);
+            } else {
+                feedbackElement.textContent = `Helaas! Het juiste antwoord was: ${correctAnswer}`;
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                selectedButton.classList.add('selected-incorrect');
+                console.log("Incorrect. Score:", score);
+            }
+
+            // Toon controls div en de juiste knop erin
+            controlsDiv.classList.remove('hide');
+            if (currentQuestionIndex < shuffledQuestions.length - 1) {
+                nextButton.textContent = "Volgende Vraag";
+                nextButton.classList.remove('hide');
+                resetButton.classList.add('hide'); // Verberg reset knop hier
+            } else {
+                nextButton.textContent = "Bekijk Score";
+                nextButton.classList.remove('hide');
+                resetButton.classList.add('hide'); // Verberg reset knop hier
+            }
+        }
+
+        function handleNextButton() {
+            console.log("Next button clicked.");
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            console.log("Showing final score for:", participantName);
+            questionContainer.classList.add('hide');
+            progressText.classList.add('hide');
+            controlsDiv.classList.add('hide'); // Verberg next/reset knop uit controls div
+            scoreContainer.classList.remove('hide');
+
+            scoreTextElement.textContent = `${participantName}, je hebt ${score} van de ${shuffledQuestions.length} vragen correct beantwoord.`;
+
+            // --- Knop om score in te dienen ---
+            const submitScoreButton = document.createElement('button');
+            submitScoreButton.innerText = 'Score Indienen';
+            submitScoreButton.id = 'submit-score-btn';
+
+            // Styling (kan ook in CSS)
+            submitScoreButton.style.padding = '10px 25px';
+            submitScoreButton.style.backgroundColor = '#28a745';
+            submitScoreButton.style.color = 'white';
+            submitScoreButton.style.border = 'none';
+            submitScoreButton.style.borderRadius = '5px';
+            submitScoreButton.style.cursor = 'pointer';
+            submitScoreButton.style.fontSize = '1em';
+            submitScoreButton.style.marginTop = '15px';
+            submitScoreButton.style.marginRight = '10px';
+
+            // --- GECORRIGEERDE ACTIE (v2): Stuur data direct naar Google Apps Script met CORS ---
+            submitScoreButton.onclick = () => { // Opening brace 1 (onclick callback)
+                // --- BELANGRIJK: Vervang placeholder door JOUW Web App URL ---
+                const scriptURL = "https://script.google.com/macros/s/AKfycbyl_mMvrLKWpM-lYfrnwTccP3kxFNzJPhCCEATFEDZoHaz8ouO7QfP3nwmC5PD3XPc3/exec"; // Plak hier JOUW URL
+                // --- EINDE BELANGRIJK ---
+
+                 // Check of de URL placeholder nog aanwezig is (of leeg is)
+                 if (scriptURL === "JOUW_GEKOPIEERDE_WEB_APP_URL_HIER" || !scriptURL || scriptURL.trim() === "") {
+                     alert("Fout: De Google Apps Script URL is nog niet (correct) ingesteld in de code!");
+                     return; // Stop als URL ontbreekt
+                 }
+
+                // De data die we willen sturen
+                const dataToSend = {
+                    name: participantName,
+                    score: score // Score is al een nummer
+                };
+
+                console.log("Score indienen - Data verzenden naar Apps Script:", dataToSend);
+
+                // Knoppen aanpassen tijdens verzenden
+                submitScoreButton.innerText = 'Bezig met indienen...';
+                submitScoreButton.disabled = true;
+                resetButton.disabled = true; // Ook de reset knop even uitschakelen
+
+                // Gebruik fetch om de data te POSTen met CORS mode
+                fetch(scriptURL, { // Opening brace 2 (fetch options object)
+                    method: 'POST',
+                    mode: 'cors', // Gebruik CORS mode
+                    cache: 'no-cache',
+                    headers: { // Opening brace 3 (headers object)
+                        'Content-Type': 'application/json' // Stuur als JSON
+                    }, // Closing brace 3 (headers object)
+                    redirect: 'follow',
+                    body: JSON.stringify(dataToSend) // Zet JavaScript object om naar JSON string
+                }) // Closing parenthesis for fetch() call - CORRECTIE
+                .then(response => { // Opening brace 4 (.then for response)
+                    // Check of het netwerk antwoord OK is (status 2xx)
+                    if (!response.ok) {
+                        // Probeer meer info uit de response te halen bij een fout
+                        return response.text().then(text => {
+                           throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status}). Server response: ${text}`);
+                        });
+                    }
+                    // Probeer het antwoord van het script als JSON te lezen
+                    return response.json();
+                }) // Closing brace 4 (.then for response)
+                .then(data => { // Opening brace 5 (.then for data)
+                    // Verwerk het JSON antwoord van het Apps Script
+                    console.log('Success response from Apps Script:', data);
+                    if (data.status === "success") {
+                        // Toon succesbericht
+                        scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol ingediend!`;
+                        // Verberg/verwijder de submit knop
+                        submitScoreButton.classList.add('hide');
+                        submitScoreButton.remove(); // Verwijder uit DOM
+                        resetButton.disabled = false; // Maak reset knop weer actief
+                    } else {
+                        // Er was een fout volgens het Apps Script zelf
+                        throw new Error(data.message || "Onbekende fout van server ontvangen (status niet 'success').");
+                    }
+                }) // Closing brace 5 (.then for data)
+                .catch((error) => { // Opening brace 6 (.catch)
+                    // Vang alle fouten op (netwerk of verwerking)
+                    console.error('Error tijdens fetch of verwerking!', error);
+                    // Geef een duidelijkere melding, inclusief de error message
+                    alert(`Er ging iets mis bij het indienen van de score:\n${error.message}\n\nControleer je internetverbinding en probeer het eventueel opnieuw.`);
+                     // Zet knoppen terug naar beginstaat bij fout
+                     submitScoreButton.innerText = 'Score Indienen';
+                     submitScoreButton.disabled = false;
+                     resetButton.disabled = false; // Maak reset knop weer actief
+                }); // Closing brace 6 (.catch)
+            }; // Closing brace 1 (onclick callback)
+
+
+            // Voeg de 'Indienen' knop toe aan de score container
+            scoreContainer.appendChild(submitScoreButton);
+
+            // Zorg dat de 'Opnieuw Beginnen' knop ook in de score container komt te staan
+            resetButton.classList.remove('hide'); // Maak hem zichtbaar
+            scoreContainer.appendChild(resetButton); // Voeg hem toe aan de score container
+        }
+
+        // --- Event Listeners ---
+        nextButton.addEventListener('click', handleNextButton); // Voor 'Volgende Vraag' / 'Bekijk Score'
+
+        // --- GECORRIGEERDE ACTIE VOOR OPNIEUW BEGINNEN KNOP ---
+        resetButton.addEventListener('click', () => {
+            console.log("Reset button clicked - returning to name entry.");
+
+            // Verberg quiz en score containers
+            quizContainer.classList.add('hide');
+            scoreContainer.classList.add('hide');
+
+            // Verwijder eventuele submit knop uit score container
+            const oldSubmitBtn = document.getElementById('submit-score-btn');
+            if (oldSubmitBtn) oldSubmitBtn.remove();
+
+            // Verberg de controls div (met next button)
+             controlsDiv.classList.add('hide');
+
+            // Zorg dat de reset knop zelf ook verborgen is voor de volgende ronde
+            resetButton.classList.add('hide');
+
+            // Toon het naam-invoer scherm weer
+            nameEntryContainer.classList.remove('hide');
+
+            // Maak naamveld leeg en disable start knop
+            nameInput.value = '';
+            startQuizButton.disabled = true;
+
+            // Scroll naar boven
+            window.scrollTo(0, 0);
+        });
+        // --- EINDE AANGEPASTE ACTIE ---
+
+
+        // --- Start de Quiz ---
+        // De quiz start nu via de 'startQuizButton.addEventListener' hierboven.
+        // De oude 'DOMContentLoaded' listener is (correct) niet aanwezig.
+
+    </script>
+
+</body>
+</html>
