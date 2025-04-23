@@ -252,8 +252,8 @@
 
         // --- Quiz Data (50 Vragen - CONTROLEER OP JUISTHEID!) ---
         const quizData = [
-            // ... (jouw 50 vragen hier - ongewijzigd) ...
-            { question: "Wat is de meest voorkomende vorm van diabetes?", answers: ["Diabetes Type 1", "Diabetes Type 2", "Zwangerschapsdiabetes", "MODY"], correctAnswer: "Diabetes Type 2" },
+             // ... (jouw 50 vragen hier - ongewijzigd) ...
+             { question: "Wat is de meest voorkomende vorm van diabetes?", answers: ["Diabetes Type 1", "Diabetes Type 2", "Zwangerschapsdiabetes", "MODY"], correctAnswer: "Diabetes Type 2" },
             { question: "Welk hormoon reguleert de bloedsuikerspiegel door glucose uit het bloed op te nemen?", answers: ["Glucagon", "Adrenaline", "Insuline", "Cortisol"], correctAnswer: "Insuline" },
             { question: "Wat is een veelvoorkomend symptoom van onbehandelde diabetes?", answers: ["Gewichtstoename", "Veel dorst en vaak plassen", "Lage bloeddruk", "Energieoverschot"], correctAnswer: "Veel dorst en vaak plassen" },
             { question: "Wat is de belangrijkste oorzaak van Diabetes Type 1?", answers: ["Ongezonde voeding", "Auto-immuunreactie", "Overgewicht", "Te weinig beweging"], correctAnswer: "Auto-immuunreactie" },
@@ -322,13 +322,13 @@
         const answersElement = document.getElementById('answers');
         const feedbackElement = document.getElementById('feedback');
         const nextButton = document.getElementById('next-btn');
-        const resetButton = document.getElementById('reset-btn');
+        // const resetButton = document.getElementById('reset-btn'); // <<< VERWIJDERD: Wordt dynamisch gemaakt
         const scoreContainer = document.getElementById('score-container');
         const scoreTextElement = document.getElementById('score-text');
         const nameEntryContainer = document.getElementById('name-entry');
         const nameInput = document.getElementById('participant-name');
         const startQuizButton = document.getElementById('start-quiz-btn');
-        const controlsDiv = document.getElementById('controls'); // Selecteer controls div
+        const controlsDiv = document.getElementById('controls');
 
         // --- Logica om Start knop te activeren/deactiveren ---
         nameInput.addEventListener('input', () => {
@@ -341,7 +341,7 @@
 
         // --- Code voor de Start knop (Klik Actie) ---
         startQuizButton.addEventListener('click', () => {
-            console.log("Start Quiz knop geklikt!"); // Debug log
+            console.log("Start Quiz knop geklikt!");
             participantName = nameInput.value.trim();
             if (participantName === '') {
                 alert('Vul alsjeblieft je naam in.');
@@ -365,23 +365,25 @@
         }
 
         function startQuiz() {
-            console.log("startQuiz functie aangeroepen!"); // Debug log
+            console.log("startQuiz functie aangeroepen!");
             console.log("Starting quiz for:", participantName);
             currentQuestionIndex = 0;
             score = 0;
             shuffledQuestions = shuffleArray([...quizData]);
-            scoreContainer.classList.add('hide'); // Verberg score container
-            questionContainer.classList.remove('hide'); // Toon vragen container
+            scoreContainer.classList.add('hide');
+            questionContainer.classList.remove('hide');
 
             // Ruim eventuele oude knoppen op uit score container
             const oldSubmitBtn = document.getElementById('submit-score-btn');
             if (oldSubmitBtn) oldSubmitBtn.remove();
-            const oldStopBtn = document.getElementById('stop-quiz-btn'); // Ruim ook stop knop op
-             if(oldStopBtn) oldStopBtn.remove();
+            const oldStopBtn = document.getElementById('stop-quiz-btn');
+            if(oldStopBtn) oldStopBtn.remove();
+            const oldResetBtn = document.getElementById('reset-btn'); // Zoek naar oude reset knop
+            if(oldResetBtn) oldResetBtn.remove(); // Verwijder indien gevonden
 
-            controlsDiv.classList.add('hide'); // Verberg controls div (met next/reset) initieel
-            resetButton.classList.add('hide'); // Zorg dat reset knop verborgen is
-            nextButton.classList.add('hide'); // Zorg dat next knop verborgen is
+            controlsDiv.classList.add('hide'); // Verberg controls div initieel
+            // resetButton.classList.add('hide'); // <<< VERWIJDERD: Bestaat hier nog niet
+            nextButton.classList.add('hide');
             feedbackElement.classList.add('hide');
             progressText.classList.remove('hide');
             showQuestion();
@@ -405,8 +407,8 @@
 
         function resetState() {
             feedbackElement.textContent = '';
-            feedbackElement.className = 'hide feedback'; // Gebruik beide classes
-            nextButton.classList.add('hide'); // Verberg 'Volgende'
+            feedbackElement.className = 'hide feedback';
+            nextButton.classList.add('hide');
             while (answersElement.firstChild) {
                 answersElement.removeChild(answersElement.firstChild);
             }
@@ -441,16 +443,15 @@
                 console.log("Incorrect. Score:", score);
             }
 
-            // Toon controls div en de juiste knop erin
-            controlsDiv.classList.remove('hide');
+            controlsDiv.classList.remove('hide'); // Toon controls div
             if (currentQuestionIndex < shuffledQuestions.length - 1) {
                 nextButton.textContent = "Volgende Vraag";
-                nextButton.classList.remove('hide');
-                resetButton.classList.add('hide'); // Verberg reset knop hier
+                nextButton.classList.remove('hide'); // Toon 'Volgende' knop
+                // Reset knop is hier niet relevant
             } else {
                 nextButton.textContent = "Bekijk Score";
-                nextButton.classList.remove('hide');
-                resetButton.classList.add('hide'); // Verberg reset knop hier
+                nextButton.classList.remove('hide'); // Toon 'Bekijk Score' knop
+                 // Reset knop is hier niet relevant
             }
         }
 
@@ -464,174 +465,28 @@
             }
         }
 
-        function showScore() {
-            console.log("Showing final score for:", participantName);
-            questionContainer.classList.add('hide');
-            progressText.classList.add('hide');
-            controlsDiv.classList.add('hide'); // Verberg next/reset knop uit controls div
-            scoreContainer.classList.remove('hide');
-
-            scoreTextElement.textContent = `${participantName}, je hebt ${score} van de ${shuffledQuestions.length} vragen correct beantwoord.`;
-
-            // --- Knop om score in te dienen ---
-            const submitScoreButton = document.createElement('button');
-            submitScoreButton.innerText = 'Score Indienen';
-            submitScoreButton.id = 'submit-score-btn';
-
-            // Styling (kan ook in CSS)
-            submitScoreButton.style.padding = '10px 25px';
-            submitScoreButton.style.backgroundColor = '#28a745';
-            submitScoreButton.style.color = 'white';
-            submitScoreButton.style.border = 'none';
-            submitScoreButton.style.borderRadius = '5px';
-            submitScoreButton.style.cursor = 'pointer';
-            submitScoreButton.style.fontSize = '1em';
-            submitScoreButton.style.marginTop = '15px';
-            submitScoreButton.style.marginRight = '10px';
-
-            // --- NIEUWE ACTIE: Stuur data direct naar Formspree ---
-            submitScoreButton.onclick = () => { // Opening brace 1 (onclick callback)
-                // --- BELANGRIJK: Plak hier JOUW Formspree Endpoint URL ---
-                 const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< Jouw Formspree URL hier!
-                // --- EINDE BELANGRIJK ---
-
-                 // Check of de URL placeholder nog aanwezig is (of leeg is) - Aangepast voor duidelijkheid
-                 if (!formspreeURL || formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || formspreeURL.trim() === "") {
-                     alert("Fout: De Formspree URL is nog niet (correct) ingesteld in de code!");
-                     return; // Stop als URL ontbreekt
-                 }
-
-                // De data die we willen sturen
-                const dataToSend = {
-                    naam: participantName, // Veldnaam 'naam'
-                    score: score,          // Veldnaam 'score'
-                    quiz_titel: "Diabetes Quiz (50 Vragen)" // Extra veld
-                };
-
-                console.log("Score indienen - Data verzenden naar Formspree:", dataToSend);
-
-                // Knoppen aanpassen tijdens verzenden
-                submitScoreButton.innerText = 'Bezig met indienen...';
-                submitScoreButton.disabled = true;
-                resetButton.disabled = true;
-
-                // Gebruik fetch om de data te POSTen naar Formspree
-                fetch(formspreeURL, { // Opening brace 2 (fetch options object)
-                    method: 'POST',
-                    mode: 'cors', // Formspree ondersteunt CORS
-                    headers: { // Opening brace 3 (headers object)
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json' // Vraag JSON terug van Formspree
-                    }, // Closing brace 3 (headers object)
-                    body: JSON.stringify(dataToSend) // Zet JavaScript object om naar JSON string
-                }) // Closing parenthesis for fetch() call
-                .then(response => { // Opening brace 4 (.then for response)
-                    // Check of het netwerk antwoord OK is (status 2xx)
-                    if (response.ok) {
-                       return response.json(); // Als OK, parse het JSON antwoord
-                    } else {
-                       // Als niet OK, probeer error te lezen
-                       return response.json().then(errorData => {
-                           throw new Error(`Formspree error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : (errorData.error || response.statusText)} (status: ${response.status})`);
-                       }).catch(() => { // Fallback als error geen JSON is
-                           throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status})`);
-                       });
-                    }
-                }) // Closing brace 4 (.then for response)
-                .then(data => { // Opening brace 5 (.then for data processing)
-                    console.log('Success response from Formspree:', data);
-                    if (data.ok || data.success) { // Check op Formspree succes response
-                        scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol verzonden!`;
-                        submitScoreButton.classList.add('hide');
-                        submitScoreButton.remove();
-                        resetButton.disabled = false; // Reset knop weer actief maken
-                    } else { // Fout volgens Formspree
-                        throw new Error(data.error || "Onbekende fout van Formspree ontvangen.");
-                    }
-                }) // Closing brace 5 (.then for data processing)
-                .catch((error) => { // Opening brace 6 (.catch for all errors)
-                    console.error('Error tijdens fetch of verwerking!', error);
-                    alert(`Er ging iets mis bij het indienen van de score:\n${error.message}\n\nControleer je internetverbinding en probeer het eventueel opnieuw.`);
-                     submitScoreButton.innerText = 'Score Indienen'; // Zet knop terug bij fout
-                     submitScoreButton.disabled = false;
-                     resetButton.disabled = false; // Reset knop weer actief maken
-                }); // Closing brace 6 (.catch)
-            }; // Closing brace 1 (onclick callback)
-
-
-            // Voeg de 'Indienen' knop toe aan de score container
-            scoreContainer.appendChild(submitScoreButton);
-
-            // Zorg dat de 'Opnieuw Beginnen' knop ook in de score container komt te staan
-            resetButton.classList.remove('hide'); // Maak hem zichtbaar
-            scoreContainer.appendChild(resetButton); // Voeg hem toe aan de score container
-
-            // --- START NIEUWE CODE: Knop om te stoppen ---
-            const stopButton = document.createElement('button');
-            stopButton.innerText = 'Quiz Afsluiten';
-            stopButton.id = 'stop-quiz-btn'; // Gebruik CSS ID voor styling
-
-            // Actie voor de stop knop
-            stopButton.onclick = () => {
-                console.log("Stop knop geklikt.");
-                // Verberg de quiz en score containers
-                quizContainer.classList.add('hide');
-                scoreContainer.classList.add('hide');
-                nameEntryContainer.classList.add('hide'); // Verberg naam invoer ook
-
-                // Toon een bedankbericht in de footer
-                const footer = document.querySelector('footer');
-                const thankYouMessage = document.createElement('p');
-                thankYouMessage.id = 'thank-you-msg';
-                thankYouMessage.style.fontWeight = 'bold';
-                thankYouMessage.style.marginTop = '30px';
-                thankYouMessage.textContent = 'Bedankt voor uw deelname!';
-
-                // Verwijder eventueel oud bedankbericht eerst
-                const oldThankYouMsg = document.getElementById('thank-you-msg');
-                if(oldThankYouMsg) oldThankYouMsg.remove();
-
-                // Voeg het nieuwe bericht toe
-                footer.appendChild(thankYouMessage);
-
-                // Scroll naar boven
-                window.scrollTo(0, 0);
-            };
-
-            // Voeg de 'Stoppen' knop toe aan de score container
-            scoreContainer.appendChild(stopButton);
-            // --- EINDE NIEUWE CODE VOOR STOPPEN ---
-
-        } // Einde showScore() functie
-
-        // --- Event Listeners ---
-        nextButton.addEventListener('click', handleNextButton); // Voor 'Volgende Vraag' / 'Bekijk Score'
-
-        // --- GECORRIGEERDE ACTIE VOOR OPNIEUW BEGINNEN KNOP ---
-        resetButton.addEventListener('click', () => {
+        // --- NIEUWE FUNCTIE VOOR RESET ACTIE ---
+        function handleResetClick() {
             console.log("Reset button clicked - returning to name entry.");
 
             // Verberg quiz en score containers
             quizContainer.classList.add('hide');
             scoreContainer.classList.add('hide');
 
-             // Verwijder eventueel bedankbericht uit footer  // <<< Correctie toegevoegd
-             const oldThankYouMsg = document.getElementById('thank-you-msg');
-             if(oldThankYouMsg) oldThankYouMsg.remove();
+            // Verwijder eventueel bedankbericht uit footer
+            const oldThankYouMsg = document.getElementById('thank-you-msg');
+            if(oldThankYouMsg) oldThankYouMsg.remove();
 
-            // Verwijder eventuele submit knop uit score container
+            // Verwijder knoppen die dynamisch zijn toegevoegd (submit, stop, reset)
             const oldSubmitBtn = document.getElementById('submit-score-btn');
             if (oldSubmitBtn) oldSubmitBtn.remove();
-            // Verwijder eventuele stop knop
             const oldStopBtn = document.getElementById('stop-quiz-btn');
-             if(oldStopBtn) oldStopBtn.remove();
+            if(oldStopBtn) oldStopBtn.remove();
+            const oldResetBtn = document.getElementById('reset-btn'); // Zoek naar de knop die geklikt is
+            if(oldResetBtn) oldResetBtn.remove(); // Verwijder zichzelf ook
 
-
-            // Verberg de controls div (met next button)
-             controlsDiv.classList.add('hide');
-
-            // Zorg dat de reset knop zelf ook verborgen is voor de volgende ronde
-            resetButton.classList.add('hide');
+            // Verberg de controls div
+            controlsDiv.classList.add('hide');
 
             // Toon het naam-invoer scherm weer
             nameEntryContainer.classList.remove('hide');
@@ -642,13 +497,142 @@
 
             // Scroll naar boven
             window.scrollTo(0, 0);
-        });
-        // --- EINDE AANGEPASTE ACTIE ---
+        }
+        // --- EINDE NIEUWE FUNCTIE ---
+
+        function showScore() {
+            console.log("Showing final score for:", participantName);
+            questionContainer.classList.add('hide');
+            progressText.classList.add('hide');
+            controlsDiv.classList.add('hide'); // Verberg controls div
+            scoreContainer.classList.remove('hide');
+
+            scoreTextElement.textContent = `${participantName}, je hebt ${score} van de ${shuffledQuestions.length} vragen correct beantwoord.`;
+
+            // --- Knop om score in te dienen ---
+            const submitScoreButton = document.createElement('button');
+            submitScoreButton.innerText = 'Score Indienen';
+            submitScoreButton.id = 'submit-score-btn';
+            // Styling... (kan ook via CSS class)
+            submitScoreButton.style.padding = '10px 25px';
+            submitScoreButton.style.backgroundColor = '#28a745';
+            submitScoreButton.style.color = 'white';
+            submitScoreButton.style.border = 'none';
+            submitScoreButton.style.borderRadius = '5px';
+            submitScoreButton.style.cursor = 'pointer';
+            submitScoreButton.style.fontSize = '1em';
+            submitScoreButton.style.marginTop = '15px';
+            submitScoreButton.style.marginRight = '10px';
+
+            // --- Actie voor Indienen knop (Formspree) ---
+            submitScoreButton.onclick = () => {
+                const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< CONTROLEER DEZE URL!
+                 if (!formspreeURL || formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || formspreeURL.trim() === "") {
+                     alert("Fout: De Formspree URL is nog niet (correct) ingesteld in de code!");
+                     return;
+                 }
+                const dataToSend = { naam: participantName, score: score, quiz_titel: "Diabetes Quiz (50 Vragen)" };
+                console.log("Score indienen - Data verzenden naar Formspree:", dataToSend);
+                submitScoreButton.innerText = 'Bezig met indienen...';
+                submitScoreButton.disabled = true;
+                if(resetButton) resetButton.disabled = true; // Schakel reset uit indien aanwezig
+                 if(stopButton) stopButton.disabled = true;  // Schakel stop uit indien aanwezig
+
+                fetch(formspreeURL, {
+                    method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json','Accept': 'application/json'},
+                    body: JSON.stringify(dataToSend)
+                })
+                .then(response => {
+                    if (response.ok) { return response.json(); }
+                    else {
+                       return response.json().then(errorData => { throw new Error(`Formspree error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : (errorData.error || response.statusText)} (status: ${response.status})`); })
+                       .catch(() => { throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status})`); });
+                    }
+                })
+                .then(data => {
+                    console.log('Success response from Formspree:', data);
+                    if (data.ok || data.success) {
+                        scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol verzonden!`;
+                        submitScoreButton.classList.add('hide');
+                        submitScoreButton.remove();
+                        if(resetButton) resetButton.disabled = false; // Maak reset weer actief
+                         if(stopButton) stopButton.disabled = false;  // Maak stop weer actief
+                    } else { throw new Error(data.error || "Onbekende fout van Formspree ontvangen."); }
+                })
+                .catch((error) => {
+                    console.error('Error tijdens fetch of verwerking!', error);
+                    alert(`Er ging iets mis bij het indienen van de score:\n${error.message}\n\nControleer je internetverbinding en probeer het eventueel opnieuw.`);
+                     submitScoreButton.innerText = 'Score Indienen'; // Zet knop terug
+                     submitScoreButton.disabled = false;
+                     if(resetButton) resetButton.disabled = false; // Maak reset weer actief
+                     if(stopButton) stopButton.disabled = false;  // Maak stop weer actief
+                });
+            };
+            scoreContainer.appendChild(submitScoreButton); // Voeg indienen knop toe
+
+
+            // --- Knop Opnieuw Beginnen (Dynamisch Gemaakt) ---
+            const resetButton = document.createElement('button'); // <<< MAAK HIER AAN
+            resetButton.innerText = 'Opnieuw Beginnen';
+            resetButton.id = 'reset-btn'; // Geef ID mee
+             // Styling... (kan ook via CSS class)
+            resetButton.style.padding = '10px 25px';
+            resetButton.style.backgroundColor = '#23a9e4';
+            resetButton.style.color = 'white';
+            resetButton.style.border = 'none';
+            resetButton.style.borderRadius = '5px';
+            resetButton.style.cursor = 'pointer';
+            resetButton.style.fontSize = '1em';
+            resetButton.style.marginTop = '15px';
+            resetButton.style.marginLeft = '10px';
+
+            resetButton.addEventListener('click', handleResetClick); // <<< VOEG LISTENER HIER TOE
+            scoreContainer.appendChild(resetButton); // <<< VOEG TOE AAN SCORE CONTAINER
+
+
+            // --- Knop Quiz Afsluiten (Dynamisch Gemaakt) ---
+            const stopButton = document.createElement('button');
+            stopButton.innerText = 'Quiz Afsluiten';
+            stopButton.id = 'stop-quiz-btn'; // Gebruik CSS ID voor styling
+            // Styling... (kan ook via CSS class - zie bovenaan)
+             stopButton.style.padding = '10px 25px';
+             stopButton.style.backgroundColor = '#dc3545';
+             stopButton.style.color = 'white';
+             stopButton.style.border = 'none';
+             stopButton.style.borderRadius = '5px';
+             stopButton.style.cursor = 'pointer';
+             stopButton.style.fontSize = '1em';
+             stopButton.style.marginTop = '15px';
+             stopButton.style.marginLeft = '10px';
+
+            stopButton.onclick = () => { // Actie voor stop knop
+                console.log("Stop knop geklikt.");
+                quizContainer.classList.add('hide');
+                scoreContainer.classList.add('hide');
+                nameEntryContainer.classList.add('hide');
+                const footer = document.querySelector('footer');
+                const thankYouMessage = document.createElement('p');
+                thankYouMessage.id = 'thank-you-msg';
+                thankYouMessage.style.fontWeight = 'bold';
+                thankYouMessage.style.marginTop = '30px';
+                thankYouMessage.textContent = 'Bedankt voor uw deelname!';
+                const oldThankYouMsg = document.getElementById('thank-you-msg');
+                if(oldThankYouMsg) oldThankYouMsg.remove();
+                footer.appendChild(thankYouMessage);
+                window.scrollTo(0, 0);
+            };
+            scoreContainer.appendChild(stopButton); // <<< VOEG TOE AAN SCORE CONTAINER
+
+        } // Einde showScore() functie
+
+        // --- Event Listener voor Next Button (blijft ongewijzigd) ---
+        nextButton.addEventListener('click', handleNextButton);
+
+        // --- Globale listener voor Reset Button is VERWIJDERD ---
 
 
         // --- Start de Quiz ---
-        // De quiz start nu via de 'startQuizButton.addEventListener' hierboven.
-        // De oude 'DOMContentLoaded' listener is (correct) niet aanwezig.
+        // Start via de startQuizButton listener bovenaan
 
     </script>
 
