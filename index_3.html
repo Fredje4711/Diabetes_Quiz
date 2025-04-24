@@ -15,21 +15,21 @@
             color: #333;
         }
 
-        #quiz-container {
+        #quiz-container, #review-container /* Voeg review container toe aan basisstijl */ {
             background-color: #fff;
-            padding: 10px;
+            padding: 15px; /* Iets meer padding */
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             max-width: 700px;
             width: 90%;
-            margin: 0px auto 0px auto; /* Kleinere ondermarge */
+            margin: 20px auto 0 auto; /* Ruimte boven */
         }
 
-        h1 {
+        h1, h2 { /* Stijl voor beide koppen */
             color: #23a9e4;
             text-align: center;
             margin-top: 0;
-            margin-bottom: 0px;
+            margin-bottom: 20px; /* Ruimte onder koppen */
         }
 
         #question-container {
@@ -83,6 +83,8 @@
 
         #answers button.selected-incorrect {
              border-width: 2px;
+             border-color: #dc3545; /* Duidelijkere rand voor selectie */
+             opacity: 0.9;
         }
 
 
@@ -110,7 +112,7 @@
             margin-top: 40px; /* Meer ruimte boven knoppen */
         }
 
-        #next-btn, #reset-btn {
+        #next-btn, #go-to-score-btn /* Stijl voor beide navigatieknoppen */ {
             padding: 10px 25px;
             background-color: #23a9e4;
             color: white;
@@ -121,27 +123,44 @@
             transition: background-color 0.3s;
             margin: 5px;
         }
-
-        #next-btn:hover, #reset-btn:hover {
-            background-color: #1a8cd1;
+        #next-btn:hover, #go-to-score-btn:hover {
+             background-color: #1a8cd1;
         }
 
-        /* Stijl voor de nieuwe stop knop */
-        #stop-quiz-btn {
+
+        /* Stijl voor knoppen in score container */
+        #score-container button {
              padding: 10px 25px;
-             background-color: #dc3545; /* Rood */
              color: white;
              border: none;
              border-radius: 5px;
              cursor: pointer;
              font-size: 1em;
-             margin-top: 15px; /* Gelijk aan andere knoppen */
-             margin-left: 10px; /* Ruimte naast andere knoppen */
+             margin-top: 15px;
+             margin-left: 5px; /* Beetje ruimte tussen knoppen */
+             margin-right: 5px;
+             transition: background-color 0.3s;
         }
-         #stop-quiz-btn:hover {
-             background-color: #c82333;
-         }
+         #submit-score-btn { background-color: #28a745; }
+         #submit-score-btn:hover:not([disabled]) { background-color: #218838; }
+         #reset-btn { background-color: #23a9e4; }
+         #reset-btn:hover:not([disabled]) { background-color: #1a8cd1; }
+         #stop-quiz-btn { background-color: #dc3545; }
+         #stop-quiz-btn:hover:not([disabled]) { background-color: #c82333; }
 
+         #score-container button:disabled {
+             opacity: 0.65;
+             cursor: not-allowed;
+         }
+		 
+		      /* Zorg dat alle knoppen in de score container dezelfde breedte hebben */
+     #score-container button {
+         /* ... (bestaande stijlen zoals padding, color, etc. blijven behouden) ... */
+         min-width: 180px; /* Minimale breedte, pas aan naar wens */
+         /* OF een vaste breedte: width: 180px; */
+         box-sizing: border-box; /* Zorgt dat padding binnen de width valt */
+         vertical-align: top; /* Helpt soms bij uitlijning */
+     }
 
         .hide {
             display: none;
@@ -154,17 +173,42 @@
              color: #555;
          }
 
-         #score-container {
+         #score-container, #review-container /* Centreer tekst in deze containers */ {
              text-align: center;
          }
-         #score-container h2{
+          #score-container h2, #review-container h2 { /* Kleur voor beide titels */
              color: #23a9e4;
+         }
+
+         /* Styling voor review content */
+         #review-content {
+             text-align: left; /* Lijn review items links uit */
+             max-width: 600px; /* Max breedte voor leesbaarheid */
+             margin: 0 auto; /* Centreer binnen de container */
+         }
+         #review-content div { /* Stijl voor elk review item */
+             margin-bottom: 15px;
+             padding-bottom: 10px;
+             border-bottom: 1px solid #eee;
+         }
+          #review-content p { /* Marge voor paragrafen binnen review */
+             margin: 5px 0 5px 15px; /* Inspringen voor antwoorden */
+         }
+         #review-content p:first-of-type { /* Geen inspringen voor de vraag zelf */
+              margin-left: 0;
+              font-weight: bold;
+         }
+         #review-content i { /* Cursief voor gebruiker's antwoord */
+             color: #721c24;
+         }
+          #review-content strong { /* Vet voor correcte antwoord */
+             color: #155724;
          }
 
 
         footer {
             text-align: center;
-            margin-top: -5px;
+            margin-top: 25px; /* Meer ruimte boven footer */
             padding: 15px;
             border-top: 1px solid #eee;
             color: #666;
@@ -173,82 +217,105 @@
         }
 
         footer p {
-            margin: 5px 0;
+            margin: 8px 0; /* Iets meer verticale ruimte in footer */
         }
 
-         footer a {
-            color: #23a9e4;
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-        }
-
-         footer a:hover {
-             text-decoration: underline;
+        /* Specifieke stijl voor de social links paragraaf */
+         footer p.social-links {
+             display: flex;
+             flex-wrap: wrap;
+             justify-content: center;
+             align-items: center;
+             gap: 20px; /* Ruimte tussen links */
          }
 
-        footer span {
-            margin-right: 4px;
+         footer p.social-links a { /* Stijl voor de social links */
+            text-decoration: none;
+            font-weight: bold;
             color: #23a9e4;
-            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap; /* Voorkom breken tekst */
         }
+         footer p.social-links a:hover {
+            text-decoration: underline;
+         }
 
-        footer img {
-             width: 16px;
-             height: 16px;
-             margin-right: 4px;
+        footer img.social-icon { /* Stijl specifiek voor social iconen */
+             width: 20px;   /* Gewenste grootte */
+             height: 20px;  /* Gewenste grootte */
+             margin-right: 6px; /* Ruimte tussen icoon en tekst */
+             vertical-align: middle;
         }
     </style>
 
 </head>
 <body>
 
-    <!-- START NIEUWE CODE VOOR NAAM INVOER -->
-<div id="name-entry" style="text-align: center; margin-bottom: 20px; background-color: #fff; padding: 20px; max-width: 700px; width: 90%; margin: 20px auto 0 auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-    <label for="participant-name" style="display: block; margin-bottom: 8px; font-weight: bold;">Voer je naam in:</label>
-    <input type="text" id="participant-name" name="participant-name" required style="padding: 10px; width: 80%; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
-    <button id="start-quiz-btn" style="padding: 10px 25px; background-color: #23a9e4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em;" disabled>Start Quiz</button>
-</div>
-<!-- EINDE NIEUWE CODE VOOR NAAM INVOER -->
+    <!-- Naam Invoer Scherm -->
+    <div id="name-entry" style="text-align: center; margin-bottom: 20px; background-color: #fff; padding: 20px; max-width: 700px; width: 90%; margin: 20px auto 0 auto; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+        <label for="participant-name" style="display: block; margin-bottom: 8px; font-weight: bold;">Voer je naam in:</label>
+        <input type="text" id="participant-name" name="participant-name" required style="padding: 10px; width: 80%; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+        <button id="start-quiz-btn" style="padding: 10px 25px; background-color: #23a9e4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em;" disabled>Start Quiz</button>
+    </div>
 
+    <!-- Quiz Container -->
 	<div id="quiz-container" class="hide">
         <h1>Diabetes Quiz</h1>
-        <div id="progress-text">Vraag 1 van 50</div> <!-- Progress indicator -->
-
+        <div id="progress-text">Vraag 1 van 50</div>
         <div id="question-container">
             <div id="question">Vraag wordt geladen...</div>
-            <div id="answers">
-                <!-- Antwoordknoppen worden hier door JavaScript ingevoegd -->
-            </div>
-            <div id="feedback" class="hide feedback"></div> <!-- Standaard verborgen -->
+            <div id="answers"></div>
+            <div id="feedback" class="hide feedback"></div>
         </div>
-
-        <div id="score-container" class="hide">
-             <h2>Je score</h2>
-             <p id="score-text"></p>
-             <!-- Knoppen worden hier door JS ingevoegd -->
-        </div>
-
-
-        <div id="controls" class="hide"> <!-- Standaard verborgen -->
+        <div id="controls" class="hide">
             <button id="next-btn" class="hide">Volgende Vraag</button>
-            <!-- Reset knop wordt nu in score container getoond -->
         </div>
     </div>
 
+    <!-- Review Container (Overzicht Foute Antwoorden) -->
+    <div id="review-container" class="hide"> <!-- Stijl wordt nu via CSS geregeld -->
+        <h2>Overzicht Foute Antwoorden</h2>
+        <div id="review-content">
+            <!-- Fouten worden hier door JavaScript ingevoegd -->
+        </div>
+        <div style="text-align: center; margin-top: 30px;"> <!-- Meer ruimte boven knop -->
+             <button id="go-to-score-btn">Ga naar Score</button> <!-- Styling via CSS -->
+        </div>
+    </div>
+
+    <!-- Score Container -->
+    <div id="score-container" class="hide">
+         <h2>Je score</h2>
+         <p id="score-text"></p>
+         <!-- Knoppen (Indienen, Opnieuw, Afsluiten) worden hier door JS ingevoegd -->
+          <div id="submit-feedback"></div> <!-- Div voor feedback na indienen/fout -->
+    </div>
+
+    <!-- Footer -->
     <footer>
         <p>Auteur: Diabetes Liga Midden-Limburg</p>
-        <p>
+        <p class="social-links"> <!-- Class toegevoegd voor styling -->
             <a href="https://www.dlml.be" target="_blank">
-                <span style="color: #23a9e4;">🌐</span>
+                <img src="Wereldbol.png" alt="Website" class="social-icon"> <!-- Gebruik class -->
                 www.dlml.be
             </a>
+            <a href="https://www.facebook.com/p/Diabetes-Liga-Midden-Limburg-100091325418693/?locale=nl_NL" target="_blank">
+                <img src="Facebook.png" alt="Facebook" class="social-icon"> <!-- Gebruik class -->
+                Facebook
+            </a>
+            <a href="https://www.instagram.com/diabetes_liga_midden_limburg/" target="_blank">
+                <img src="Instagram.png" alt="Instagram" class="social-icon"> <!-- Gebruik class -->
+                Instagram
+            </a>
+            <a href="https://www.youtube.com/@Diabetesligamiddenlimburg" target="_blank">
+                <img src="YouTube.png" alt="YouTube" class="social-icon"> <!-- Gebruik class -->
+                YouTube
+            </a>
         </p>
-        <!-- Hier kan het bedankbericht komen -->
+        <p id="thank-you-msg" style="font-weight: bold; margin-top: 30px;"></p>
     </footer>
-
-    <script>
+	<script>
 
         // --- Quiz Data (50 Vragen - CONTROLEER OP JUISTHEID!) ---
         const quizData = [
@@ -310,7 +377,8 @@
         let currentQuestionIndex;
         let score;
         let shuffledQuestions;
-        let participantName = ''; // Globale variabele voor naam
+        let participantName = '';
+        let incorrectlyAnsweredQuestions = []; // Houdt foute antwoorden bij
         // --- EINDE BLOK QUIZ STATE ---
 
         // --- START BLOK DOM ELEMENTEN & STARTKNOP LOGICA ---
@@ -322,34 +390,30 @@
         const answersElement = document.getElementById('answers');
         const feedbackElement = document.getElementById('feedback');
         const nextButton = document.getElementById('next-btn');
-        // const resetButton = document.getElementById('reset-btn'); // <<< VERWIJDERD: Wordt dynamisch gemaakt
         const scoreContainer = document.getElementById('score-container');
         const scoreTextElement = document.getElementById('score-text');
         const nameEntryContainer = document.getElementById('name-entry');
         const nameInput = document.getElementById('participant-name');
         const startQuizButton = document.getElementById('start-quiz-btn');
         const controlsDiv = document.getElementById('controls');
+        const reviewContainer = document.getElementById('review-container');
+        const reviewContent = document.getElementById('review-content');
+        const goToScoreButton = document.getElementById('go-to-score-btn');
+        const submitFeedbackDiv = document.getElementById('submit-feedback');
 
         // --- Logica om Start knop te activeren/deactiveren ---
         nameInput.addEventListener('input', () => {
-            if (nameInput.value.trim() !== '') {
-                startQuizButton.disabled = false;
-            } else {
-                startQuizButton.disabled = true;
-            }
+            startQuizButton.disabled = nameInput.value.trim() === '';
         });
 
         // --- Code voor de Start knop (Klik Actie) ---
         startQuizButton.addEventListener('click', () => {
             console.log("Start Quiz knop geklikt!");
             participantName = nameInput.value.trim();
-            if (participantName === '') {
-                alert('Vul alsjeblieft je naam in.');
-                return;
-            }
+            if (participantName === '') { alert('Vul alsjeblieft je naam in.'); return; }
             nameEntryContainer.classList.add('hide');
             quizContainer.classList.remove('hide');
-            startQuiz(); // Start de quiz
+            startQuiz();
         });
         // --- EINDE BLOK DOM ELEMENTEN & STARTKNOP LOGICA ---
 
@@ -357,279 +421,220 @@
         // --- Functies ---
 
         function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
+            const shuffled = [...array]; // Werk met een kopie
+            for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
-            return array;
+            return shuffled;
         }
+
 
         function startQuiz() {
             console.log("startQuiz functie aangeroepen!");
             console.log("Starting quiz for:", participantName);
-            currentQuestionIndex = 0;
-            score = 0;
-            shuffledQuestions = shuffleArray([...quizData]);
-            scoreContainer.classList.add('hide');
+            currentQuestionIndex = 0; score = 0; incorrectlyAnsweredQuestions = [];
+
+             // --- START CONTROLE quizData ---
+             if (typeof quizData === 'undefined' || !Array.isArray(quizData) || quizData.length === 0) {
+                 console.error("FATALE FOUT: De 'quizData' array met vragen is niet gevonden of is leeg!");
+                 questionElement.textContent = "Fout: Kon de vragenlijst niet laden."; progressText.textContent = ""; return;
+             }
+             console.log(`quizData gevonden met ${quizData.length} vragen.`);
+            // --- EINDE CONTROLE quizData ---
+
+            shuffledQuestions = shuffleArray(quizData);
+            console.log("Shuffle resultaat (shuffledQuestions):", shuffledQuestions);
+
+            scoreContainer.classList.add('hide'); reviewContainer.classList.add('hide');
             questionContainer.classList.remove('hide');
-
-            // Ruim eventuele oude knoppen op uit score container
-            const oldSubmitBtn = document.getElementById('submit-score-btn');
-            if (oldSubmitBtn) oldSubmitBtn.remove();
-            const oldStopBtn = document.getElementById('stop-quiz-btn');
-            if(oldStopBtn) oldStopBtn.remove();
-            const oldResetBtn = document.getElementById('reset-btn'); // Zoek naar oude reset knop
-            if(oldResetBtn) oldResetBtn.remove(); // Verwijder indien gevonden
-
-            controlsDiv.classList.add('hide'); // Verberg controls div initieel
-            // resetButton.classList.add('hide'); // <<< VERWIJDERD: Bestaat hier nog niet
-            nextButton.classList.add('hide');
-            feedbackElement.classList.add('hide');
+            controlsDiv.classList.add('hide'); feedbackElement.classList.add('hide');
             progressText.classList.remove('hide');
+             // Verwijder oude knoppen en feedback uit score container
+            while (scoreContainer.querySelector('button')) { scoreContainer.removeChild(scoreContainer.querySelector('button')); }
+            submitFeedbackDiv.innerHTML = '';
+            const oldReviewScore = document.getElementById('review-score-text'); if (oldReviewScore) oldReviewScore.remove(); // Verwijder ook oude review score
+
             showQuestion();
         }
 
         function showQuestion() {
             resetState();
+
+            // --- START CONTROLE shuffledQuestions ---
+            if (!shuffledQuestions || !Array.isArray(shuffledQuestions) || shuffledQuestions.length === 0 || typeof shuffledQuestions[currentQuestionIndex] === 'undefined') {
+                console.error(`Fout in showQuestion: shuffledQuestions is ongeldig of index ${currentQuestionIndex} bestaat niet.`, shuffledQuestions);
+                questionElement.textContent = "Fout bij laden van vraag. Probeer opnieuw te starten."; progressText.textContent = "";
+                 controlsDiv.classList.add('hide'); nextButton.classList.add('hide'); return;
+            }
+            console.log(`Geldige shuffledQuestions gevonden voor index ${currentQuestionIndex}.`);
+            // --- EINDE CONTROLE shuffledQuestions ---
+
             const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            if (!currentQuestion || typeof currentQuestion.question !== 'string' || !Array.isArray(currentQuestion.answers)) {
+                 console.error("Fout: Ongeldig vraag object op index:", currentQuestionIndex, currentQuestion);
+                 questionElement.textContent = "Fout: Ongeldige vraagdata."; return;
+            }
+
             questionElement.textContent = currentQuestion.question;
             progressText.textContent = `Vraag ${currentQuestionIndex + 1} van ${shuffledQuestions.length}`;
-
-            const shuffledAnswers = shuffleArray([...currentQuestion.answers]);
+            const shuffledAnswers = shuffleArray(currentQuestion.answers);
             shuffledAnswers.forEach(answer => {
                 const button = document.createElement('button');
-                button.textContent = answer;
-                button.addEventListener('click', selectAnswer);
-                answersElement.appendChild(button);
+                button.textContent = answer; button.addEventListener('click', selectAnswer); answersElement.appendChild(button);
             });
             console.log(`Showing question ${currentQuestionIndex + 1}: "${currentQuestion.question}"`);
         }
 
         function resetState() {
-            feedbackElement.textContent = '';
-            feedbackElement.className = 'hide feedback';
+            feedbackElement.textContent = ''; feedbackElement.className = 'hide feedback';
             nextButton.classList.add('hide');
-            while (answersElement.firstChild) {
-                answersElement.removeChild(answersElement.firstChild);
-            }
+            while (answersElement.firstChild) { answersElement.removeChild(answersElement.firstChild); }
         }
 
         function selectAnswer(e) {
-            const selectedButton = e.target;
-            const selectedAnswer = selectedButton.textContent;
-            const correctAnswer = shuffledQuestions[currentQuestionIndex].correctAnswer;
-
+            const selectedButton = e.target; const selectedAnswer = selectedButton.textContent;
+            const currentQuestion = shuffledQuestions[currentQuestionIndex]; const correctAnswer = currentQuestion.correctAnswer;
             console.log(`Answer selected: "${selectedAnswer}". Correct answer: "${correctAnswer}"`);
-
             Array.from(answersElement.children).forEach(button => {
-                button.disabled = true;
-                if (button.textContent === correctAnswer) {
-                    button.classList.add('correct');
-                }
+                button.disabled = true; if (button.textContent === correctAnswer) { button.classList.add('correct'); }
             });
-
             feedbackElement.classList.remove('hide');
             if (selectedAnswer === correctAnswer) {
-                score++;
-                feedbackElement.textContent = "Correct!";
-                feedbackElement.classList.remove('incorrect');
-                feedbackElement.classList.add('correct');
-                console.log("Correct! Score:", score);
+                score++; feedbackElement.textContent = "Correct!"; feedbackElement.className = 'feedback correct'; console.log("Correct! Score:", score);
             } else {
-                feedbackElement.textContent = `Helaas! Het juiste antwoord was: ${correctAnswer}`;
-                feedbackElement.classList.remove('correct');
-                feedbackElement.classList.add('incorrect');
-                selectedButton.classList.add('selected-incorrect');
-                console.log("Incorrect. Score:", score);
+                feedbackElement.textContent = `Helaas! Het juiste antwoord was: ${correctAnswer}`; feedbackElement.className = 'feedback incorrect';
+                selectedButton.classList.add('selected-incorrect'); console.log("Incorrect. Score:", score);
+                incorrectlyAnsweredQuestions.push({ questionText: currentQuestion.question, userAnswer: selectedAnswer, correctAnswer: correctAnswer });
             }
-
-            controlsDiv.classList.remove('hide'); // Toon controls div
+            controlsDiv.classList.remove('hide');
             if (currentQuestionIndex < shuffledQuestions.length - 1) {
-                nextButton.textContent = "Volgende Vraag";
-                nextButton.classList.remove('hide'); // Toon 'Volgende' knop
-                // Reset knop is hier niet relevant
+                nextButton.textContent = "Volgende Vraag"; nextButton.classList.remove('hide');
             } else {
-                nextButton.textContent = "Bekijk Score";
-                nextButton.classList.remove('hide'); // Toon 'Bekijk Score' knop
-                 // Reset knop is hier niet relevant
+                nextButton.textContent = "Bekijk Overzicht"; nextButton.classList.remove('hide');
             }
         }
 
         function handleNextButton() {
             console.log("Next button clicked.");
             currentQuestionIndex++;
-            if (currentQuestionIndex < shuffledQuestions.length) {
-                showQuestion();
-            } else {
-                showScore();
-            }
+            if (currentQuestionIndex < shuffledQuestions.length) { showQuestion(); } else { showReview(); }
         }
 
-        // --- NIEUWE FUNCTIE VOOR RESET ACTIE ---
+        // --- Functie: Toon overzicht foute antwoorden ---
+        function showReview() {
+            console.log("Showing review of incorrect answers.");
+            questionContainer.classList.add('hide'); progressText.classList.add('hide'); controlsDiv.classList.add('hide');
+            scoreContainer.classList.add('hide'); reviewContainer.classList.remove('hide');
+
+            // --- NIEUW: Toon score in review scherm ---
+            const reviewScoreText = document.createElement('p');
+            reviewScoreText.id = 'review-score-text';
+            reviewScoreText.style.textAlign = 'center'; reviewScoreText.style.fontWeight = 'bold'; reviewScoreText.style.marginBottom = '20px';
+            reviewScoreText.textContent = `Jouw score tot nu toe: ${score} / ${shuffledQuestions.length}`; // Gebruik 'tot nu toe' voor duidelijkheid
+            const oldReviewScore = document.getElementById('review-score-text'); if (oldReviewScore) oldReviewScore.remove();
+            reviewContainer.insertBefore(reviewScoreText, reviewContent); // Voeg toe BOVEN de content div
+            // --- EINDE NIEUW ---
+
+            reviewContent.innerHTML = ''; // Maak review inhoud leeg
+            if (incorrectlyAnsweredQuestions.length === 0) {
+                reviewContent.innerHTML = '<p style="text-align: center; font-weight: bold; color: green;">Proficiat! Je hebt alle vragen correct beantwoord.</p>';
+            } else {
+                incorrectlyAnsweredQuestions.forEach((item) => {
+                    const div = document.createElement('div'); // Stijl via CSS #review-content div
+                    const qText = document.createElement('p'); qText.innerHTML = `<strong>${item.questionText}</strong>`;
+                    const userAnswerText = document.createElement('p'); userAnswerText.innerHTML = `  Jouw antwoord: <i>${item.userAnswer}</i>`;
+                    const correctAnswerText = document.createElement('p'); correctAnswerText.innerHTML = `  Correcte antwoord: <strong>${item.correctAnswer}</strong>`;
+                    div.appendChild(qText); div.appendChild(userAnswerText); div.appendChild(correctAnswerText); reviewContent.appendChild(div);
+                });
+            }
+            reviewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // --- EINDE showReview ---
+
+        // --- Functie: Reset actie ---
         function handleResetClick() {
             console.log("Reset button clicked - returning to name entry.");
-
-            // Verberg quiz en score containers
-            quizContainer.classList.add('hide');
-            scoreContainer.classList.add('hide');
-
-            // Verwijder eventueel bedankbericht uit footer
-            const oldThankYouMsg = document.getElementById('thank-you-msg');
-            if(oldThankYouMsg) oldThankYouMsg.remove();
-
-            // Verwijder knoppen die dynamisch zijn toegevoegd (submit, stop, reset)
-            const oldSubmitBtn = document.getElementById('submit-score-btn');
-            if (oldSubmitBtn) oldSubmitBtn.remove();
-            const oldStopBtn = document.getElementById('stop-quiz-btn');
-            if(oldStopBtn) oldStopBtn.remove();
-            const oldResetBtn = document.getElementById('reset-btn'); // Zoek naar de knop die geklikt is
-            if(oldResetBtn) oldResetBtn.remove(); // Verwijder zichzelf ook
-
-            // Verberg de controls div
+            quizContainer.classList.add('hide'); scoreContainer.classList.add('hide'); reviewContainer.classList.add('hide');
+            const oldThankYouMsg = document.getElementById('thank-you-msg'); if(oldThankYouMsg) oldThankYouMsg.remove();
+            const oldReviewScore = document.getElementById('review-score-text'); if (oldReviewScore) oldReviewScore.remove(); // Verwijder review score ook
+            while (scoreContainer.querySelector('button')) { scoreContainer.removeChild(scoreContainer.querySelector('button')); }
+            submitFeedbackDiv.innerHTML = '';
             controlsDiv.classList.add('hide');
-
-            // Toon het naam-invoer scherm weer
-            nameEntryContainer.classList.remove('hide');
-
-            // Maak naamveld leeg en disable start knop
-            nameInput.value = '';
-            startQuizButton.disabled = true;
-
-            // Scroll naar boven
+            nameEntryContainer.classList.remove('hide'); nameInput.value = ''; startQuizButton.disabled = true;
             window.scrollTo(0, 0);
         }
-        // --- EINDE NIEUWE FUNCTIE ---
+        // --- EINDE handleResetClick ---
 
+        // --- Functie: Toon definitieve score + knoppen ---
         function showScore() {
-            console.log("Showing final score for:", participantName);
-            questionContainer.classList.add('hide');
-            progressText.classList.add('hide');
-            controlsDiv.classList.add('hide'); // Verberg controls div
-            scoreContainer.classList.remove('hide');
-
+            console.log("Showing final score screen for:", participantName);
+            questionContainer.classList.add('hide'); progressText.classList.add('hide'); controlsDiv.classList.add('hide');
+            reviewContainer.classList.add('hide'); scoreContainer.classList.remove('hide');
             scoreTextElement.textContent = `${participantName}, je hebt ${score} van de ${shuffledQuestions.length} vragen correct beantwoord.`;
+            submitFeedbackDiv.innerHTML = '';
+            while (scoreContainer.querySelector('button')) { scoreContainer.removeChild(scoreContainer.querySelector('button')); }
 
-            // --- Knop om score in te dienen ---
+            // --- Knop om score in te dienen (Formspree) ---
             const submitScoreButton = document.createElement('button');
-            submitScoreButton.innerText = 'Score Indienen';
-            submitScoreButton.id = 'submit-score-btn';
-            // Styling... (kan ook via CSS class)
-            submitScoreButton.style.padding = '10px 25px';
-            submitScoreButton.style.backgroundColor = '#28a745';
-            submitScoreButton.style.color = 'white';
-            submitScoreButton.style.border = 'none';
-            submitScoreButton.style.borderRadius = '5px';
-            submitScoreButton.style.cursor = 'pointer';
-            submitScoreButton.style.fontSize = '1em';
-            submitScoreButton.style.marginTop = '15px';
-            submitScoreButton.style.marginRight = '10px';
+            submitScoreButton.innerText = 'Score Indienen'; submitScoreButton.id = 'submit-score-btn';
+            scoreContainer.appendChild(submitScoreButton);
 
-            // --- Actie voor Indienen knop (Formspree) ---
-            submitScoreButton.onclick = () => {
-                const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< CONTROLEER DEZE URL!
-                 if (!formspreeURL || formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || formspreeURL.trim() === "") {
-                     alert("Fout: De Formspree URL is nog niet (correct) ingesteld in de code!");
-                     return;
-                 }
-                const dataToSend = { naam: participantName, score: score, quiz_titel: "Diabetes Quiz (50 Vragen)" };
-                console.log("Score indienen - Data verzenden naar Formspree:", dataToSend);
-                submitScoreButton.innerText = 'Bezig met indienen...';
-                submitScoreButton.disabled = true;
-                if(resetButton) resetButton.disabled = true; // Schakel reset uit indien aanwezig
-                 if(stopButton) stopButton.disabled = true;  // Schakel stop uit indien aanwezig
+            // --- Knop Opnieuw Beginnen ---
+            const resetButton = document.createElement('button');
+            resetButton.innerText = 'Opnieuw Beginnen'; resetButton.id = 'reset-btn';
+            resetButton.addEventListener('click', handleResetClick);
+            scoreContainer.appendChild(resetButton);
 
-                fetch(formspreeURL, {
-                    method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json','Accept': 'application/json'},
-                    body: JSON.stringify(dataToSend)
-                })
-                .then(response => {
-                    if (response.ok) { return response.json(); }
-                    else {
-                       return response.json().then(errorData => { throw new Error(`Formspree error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : (errorData.error || response.statusText)} (status: ${response.status})`); })
-                       .catch(() => { throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status})`); });
-                    }
-                })
-                .then(data => {
-                    console.log('Success response from Formspree:', data);
-                    if (data.ok || data.success) {
-                        scoreTextElement.textContent = `Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol verzonden!`;
-                        submitScoreButton.classList.add('hide');
-                        submitScoreButton.remove();
-                        if(resetButton) resetButton.disabled = false; // Maak reset weer actief
-                         if(stopButton) stopButton.disabled = false;  // Maak stop weer actief
-                    } else { throw new Error(data.error || "Onbekende fout van Formspree ontvangen."); }
-                })
-                .catch((error) => {
-                    console.error('Error tijdens fetch of verwerking!', error);
-                    alert(`Er ging iets mis bij het indienen van de score:\n${error.message}\n\nControleer je internetverbinding en probeer het eventueel opnieuw.`);
-                     submitScoreButton.innerText = 'Score Indienen'; // Zet knop terug
-                     submitScoreButton.disabled = false;
-                     if(resetButton) resetButton.disabled = false; // Maak reset weer actief
-                     if(stopButton) stopButton.disabled = false;  // Maak stop weer actief
-                });
-            };
-            scoreContainer.appendChild(submitScoreButton); // Voeg indienen knop toe
-
-
-            // --- Knop Opnieuw Beginnen (Dynamisch Gemaakt) ---
-            const resetButton = document.createElement('button'); // <<< MAAK HIER AAN
-            resetButton.innerText = 'Opnieuw Beginnen';
-            resetButton.id = 'reset-btn'; // Geef ID mee
-             // Styling... (kan ook via CSS class)
-            resetButton.style.padding = '10px 25px';
-            resetButton.style.backgroundColor = '#23a9e4';
-            resetButton.style.color = 'white';
-            resetButton.style.border = 'none';
-            resetButton.style.borderRadius = '5px';
-            resetButton.style.cursor = 'pointer';
-            resetButton.style.fontSize = '1em';
-            resetButton.style.marginTop = '15px';
-            resetButton.style.marginLeft = '10px';
-
-            resetButton.addEventListener('click', handleResetClick); // <<< VOEG LISTENER HIER TOE
-            scoreContainer.appendChild(resetButton); // <<< VOEG TOE AAN SCORE CONTAINER
-
-
-            // --- Knop Quiz Afsluiten (Dynamisch Gemaakt) ---
+            // --- Knop Quiz Afsluiten ---
             const stopButton = document.createElement('button');
-            stopButton.innerText = 'Quiz Afsluiten';
-            stopButton.id = 'stop-quiz-btn'; // Gebruik CSS ID voor styling
-            // Styling... (kan ook via CSS class - zie bovenaan)
-             stopButton.style.padding = '10px 25px';
-             stopButton.style.backgroundColor = '#dc3545';
-             stopButton.style.color = 'white';
-             stopButton.style.border = 'none';
-             stopButton.style.borderRadius = '5px';
-             stopButton.style.cursor = 'pointer';
-             stopButton.style.fontSize = '1em';
-             stopButton.style.marginTop = '15px';
-             stopButton.style.marginLeft = '10px';
-
-            stopButton.onclick = () => { // Actie voor stop knop
+            stopButton.innerText = 'Quiz Afsluiten'; stopButton.id = 'stop-quiz-btn';
+            stopButton.onclick = () => {
                 console.log("Stop knop geklikt.");
-                quizContainer.classList.add('hide');
-                scoreContainer.classList.add('hide');
-                nameEntryContainer.classList.add('hide');
-                const footer = document.querySelector('footer');
-                const thankYouMessage = document.createElement('p');
-                thankYouMessage.id = 'thank-you-msg';
-                thankYouMessage.style.fontWeight = 'bold';
-                thankYouMessage.style.marginTop = '30px';
-                thankYouMessage.textContent = 'Bedankt voor uw deelname!';
-                const oldThankYouMsg = document.getElementById('thank-you-msg');
-                if(oldThankYouMsg) oldThankYouMsg.remove();
-                footer.appendChild(thankYouMessage);
-                window.scrollTo(0, 0);
+                quizContainer.classList.add('hide'); scoreContainer.classList.add('hide'); nameEntryContainer.classList.add('hide'); reviewContainer.classList.add('hide');
+                const footer = document.querySelector('footer'); const thankYouMessage = document.createElement('p'); thankYouMessage.id = 'thank-you-msg'; thankYouMessage.style.fontWeight = 'bold'; thankYouMessage.style.marginTop = '30px'; thankYouMessage.textContent = 'Bedankt voor uw deelname!';
+                const oldThankYouMsg = document.getElementById('thank-you-msg'); if(oldThankYouMsg) oldThankYouMsg.remove();
+                footer.appendChild(thankYouMessage); window.scrollTo(0, 0);
             };
-            scoreContainer.appendChild(stopButton); // <<< VOEG TOE AAN SCORE CONTAINER
+            scoreContainer.appendChild(stopButton);
+
+             // --- Actie voor Indienen knop (Formspree) ---
+             submitScoreButton.onclick = () => {
+                 const formspreeURL = "https://formspree.io/f/xrbqgynv"; // <<< CONTROLEER DEZE URL!
+                 if (!formspreeURL || formspreeURL === "JOUW_FORMSPREE_ENDPOINT_URL_HIER" || formspreeURL.trim() === "") {
+                     alert("Fout: De Formspree URL is nog niet (correct) ingesteld in de code!"); return;
+                 }
+                 const dataToSend = { naam: participantName, score: score, quiz_titel: "Diabetes Quiz (50 Vragen)" };
+                 console.log("Score indienen - Data verzenden naar Formspree:", dataToSend);
+                 submitScoreButton.innerText = 'Bezig met indienen...'; submitScoreButton.disabled = true;
+                 resetButton.disabled = true; stopButton.disabled = true; // Disable andere knoppen direct
+
+                 fetch(formspreeURL, { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json','Accept': 'application/json'}, body: JSON.stringify(dataToSend) })
+                 .then(response => {
+                     if (response.ok) { return response.json(); } else { return response.json().then(errorData => { throw new Error(`Formspree error: ${errorData.errors ? errorData.errors.map(e => e.message).join(', ') : (errorData.error || response.statusText)} (status: ${response.status})`); }).catch(() => { throw new Error(`Network response was not ok: ${response.statusText} (status: ${response.status})`); }); }
+                 })
+                 .then(data => {
+                     console.log('Success response from Formspree:', data);
+                     if (data.ok || data.success) {
+                         scoreTextElement.textContent = ''; // Maak score tekst leeg
+                         submitFeedbackDiv.innerHTML = `<p style="color: green; font-weight: bold;">Bedankt ${participantName}, je score (${score}/${shuffledQuestions.length}) is succesvol verzonden!</p>`;
+                         submitScoreButton.remove(); // Verwijder knop na succes
+                         resetButton.disabled = false; stopButton.disabled = false; // Enable andere knoppen
+                     } else { throw new Error(data.error || "Onbekende fout van Formspree ontvangen."); }
+                 })
+                 .catch((error) => {
+                     console.error('Error tijdens fetch of verwerking!', error);
+                      submitFeedbackDiv.innerHTML = `<p style="color: red;">Er ging iets mis bij het indienen: ${error.message}</p>`;
+                      submitScoreButton.innerText = 'Score Indienen'; submitScoreButton.disabled = false; // Zet knop terug
+                      resetButton.disabled = false; stopButton.disabled = false; // Enable andere knoppen
+                 });
+             }; // Einde onclick voor submit
 
         } // Einde showScore() functie
 
-        // --- Event Listener voor Next Button (blijft ongewijzigd) ---
+        // --- Event Listeners ---
         nextButton.addEventListener('click', handleNextButton);
-
-        // --- Globale listener voor Reset Button is VERWIJDERD ---
-
+        goToScoreButton.addEventListener('click', showScore); // Listener voor 'Ga naar Score'
 
         // --- Start de Quiz ---
         // Start via de startQuizButton listener bovenaan
