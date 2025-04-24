@@ -14,6 +14,14 @@
             background-color: #f9f9f9;
             color: #333;
         }
+		
+		    /* Verminder witruimte rond H2 in review container */
+    #review-container h2 {
+        margin-top: 5px; /* Minder ruimte boven */
+        margin-bottom: 5px; /* Minder ruimte onder */
+        /* De text-align: center en color erven van de algemene h1, h2 regel */
+    }
+	
 
         #quiz-container, #review-container /* Voeg review container toe aan basisstijl */ {
             background-color: #fff;
@@ -531,7 +539,7 @@
             const reviewScoreText = document.createElement('p');
             reviewScoreText.id = 'review-score-text';
             reviewScoreText.style.textAlign = 'center'; reviewScoreText.style.fontWeight = 'bold'; reviewScoreText.style.marginBottom = '20px';
-            reviewScoreText.textContent = `Jouw score tot nu toe: ${score} / ${shuffledQuestions.length}`; // Gebruik 'tot nu toe' voor duidelijkheid
+            reviewScoreText.textContent = `Jouw score: ${score} / ${shuffledQuestions.length}`; // Gebruik 'tot nu toe' voor duidelijkheid
             const oldReviewScore = document.getElementById('review-score-text'); if (oldReviewScore) oldReviewScore.remove();
             reviewContainer.insertBefore(reviewScoreText, reviewContent); // Voeg toe BOVEN de content div
             // --- EINDE NIEUW ---
