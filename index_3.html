@@ -14,14 +14,6 @@
             background-color: #f9f9f9;
             color: #333;
         }
-		
-		    /* Verminder witruimte rond H2 in review container */
-    #review-container h2 {
-        margin-top: 3px; /* Minder ruimte boven */
-        margin-bottom: 3px; /* Minder ruimte onder */
-        /* De text-align: center en color erven van de algemene h1, h2 regel */
-    }
-	
 
         #quiz-container, #review-container /* Voeg review container toe aan basisstijl */ {
             background-color: #fff;
@@ -37,8 +29,43 @@
             color: #23a9e4;
             text-align: center;
             margin-top: 0;
-            margin-bottom: 20px; /* Ruimte onder koppen */
+            margin-bottom: 0px; /* Ruimte onder koppen */
         }
+		
+		        h1 { /* Alleen H1 styling */
+            color: #23a9e4;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 10px; /* Ruimte onder hoofdtitel (aanpasbaar) */
+        }
+
+        h2 { /* Algemene H2 styling (bv. kleur) */
+             color: #23a9e4;
+             text-align: center;
+             /* Haal algemene margin-top/bottom hier weg of zet op 0 */
+             margin-top: 0;
+             margin-bottom: 0;
+        }
+
+        /* Specifieke marges voor H2 in de relevante containers */
+        #review-container h2,
+        #score-container h2 {
+            margin-top: 5px;    /* Ruimte BOVEN "Overzicht..." en "Je score" (pas aan) */
+            margin-bottom: 5px; /* Ruimte ONDER "Overzicht..." en "Je score" (pas aan) */
+        }
+
+        /* --- Andere CSS regels blijven hetzelfde --- */
+
+        #score-container {
+             text-align: center;
+         }
+		 
+         /* De kleur voor h2 wordt nu door de algemene 'h2' regel hierboven gezet */
+         /* #score-container h2{
+             color: #23a9e4;
+         } */ /* Deze kan waarschijnlijk weg als je de algemene 'h2' regel gebruikt */
+
+        /* --- Rest van CSS --- */
 
         #question-container {
             margin-bottom: 20px;
