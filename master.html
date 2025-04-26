@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Master - Live Diabetes Quiz</title>
+    <style>
+        body { font-family: system-ui, sans-serif; padding: 20px; line-height: 1.6; background-color: #f8f9fa;}
+        .container { max-width: 800px; margin: 20px auto; background-color: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #007bff; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+        h1 { text-align: center; border-bottom: none;} /* Hoofdtitel geen lijn */
+        h3 { font-size: 1.1em; color: #495057; border-bottom: none; margin-top: 20px;}
+        #quizState { margin-bottom: 20px; font-size: 1.1em; background-color: #fff3cd; padding: 10px 15px; border-radius: 5px; border: 1px solid #ffeeba;}
+        #questionDisplay { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; padding: 15px; background-color: #e7f3fe; border: 1px solid #a0c4e4; border-radius: 5px;}
+        #optionsDisplay ul { list-style: none; padding: 0; margin: 0; }
+        #optionsDisplay li { background-color: #f8f9fa; margin-bottom: 5px; padding: 8px 12px; border-radius: 4px; }
+        #optionsDisplay strong { color: #28a745; } /* Highlight correct antwoord */
+        #liveResults { margin-top: 15px; padding: 15px; background-color: #fdfdfe; border: 1px solid #ddd; border-radius: 5px; }
+        .live-results span { display: inline-block; min-width: 30px; text-align: right; margin-left: 10px; font-weight: bold; font-family: monospace;}
+        .live-results .correct { color: #28a745; }
+        .live-results .incorrect { color: #dc3545; }
+        .controls-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;}
+        button { padding: 12px 20px; font-size: 1em; margin: 5px 10px; cursor: pointer; border: none; border-radius: 5px; transition: background-color 0.2s;}
+        button:disabled { cursor: not-allowed; opacity: 0.6; }
+        #prevQuestionBtn { background-color: #6c757d; color: white;}
+        #prevQuestionBtn:hover:not([disabled]) { background-color: #5a6268;}
+        #nextQuestionBtn { background-color: #007bff; color: white;}
+        #nextQuestionBtn:hover:not([disabled]) { background-color: #0056b3;}
+        #resetQuizBtn { background-color: #dc3545; color: white; }
+        #resetQuizBtn:hover:not([disabled]) { background-color: #c82333;}
+        #analyzeQuizBtn { background-color: #ffc107; color: #212529;} /* Analyse knop kleur */
+        #analyzeQuizBtn:hover:not([disabled]) { background-color: #e0a800;}
+        hr { border: 0; height: 1px; background-color: #eee; margin: 25px 0; }
+        .hide { display: none; }
+        /* Stijling voor analyse sectie */
+        #analysisResults { margin-top: 20px; padding: 20px; background-color: #f0f4f8; border: 1px solid #d6e0ea; border-radius: 5px;}
+        #analysisResults h2 { border-bottom: none; margin-bottom: 10px; }
+        #analysis-summary { margin-bottom: 20px; line-height: 1.8; font-size: 1.05em; }
+        #analysis-summary strong { min-width: 40px; display: inline-block; text-align: right; }
+        #analysis-incorrect-list ol { padding-left: 25px; }
+        #analysis-incorrect-list li { margin-bottom: 10px; }
+        #analysis-incorrect-list li strong { color: #333; } /* Vraagtekst normaal */
+		        /* --- Footer Styling --- */
+        footer {
+            text-align: center;
+            margin-top: 40px; /* Meer ruimte boven footer */
+            padding: 20px 15px; /* Wat meer padding */
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9em;
+            background-color: #fff; /* Witte achtergrond voor contrast */
+             box-sizing: border-box;
+        }
+        footer p {
+            margin: 8px 0;
+        }
+        footer p.social-links {
+             display: flex;
+             flex-wrap: wrap;
+             justify-content: center;
+             align-items: center;
+             gap: 20px; /* Ruimte tussen links */
+             margin-top: 15px; /* Ruimte boven social links */
+        }
+         footer p.social-links a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #23a9e4; /* Kleur voor tekst */
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+         footer p.social-links a:hover {
+            text-decoration: underline;
+         }
+        footer img.social-icon {
+             width: 22px;   /* Iets groter misschien? */
+             height: 22px;
+             margin-right: 6px;
+             vertical-align: middle;
+        }
+        #thank-you-msg { /* Stijl voor bedankbericht */
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 1.2em; /* Zorg dat het ruimte inneemt */
+            color: #007bff; /* Blauwe kleur voor bedankt */
+        }
+        /* --- Einde Footer Styling --- */
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz Master Control</h1>
+
+        <div id="quizState">
+            Huidige Vraag: <span id="currentQuestionIndex">-</span>
+        </div>
+
+        <hr>
+
+        <h2>Actieve Vraag:</h2>
+        <div id="questionDisplay">Nog geen vraag geselecteerd.</div>
+        <div id="optionsDisplay"></div>
+
+        <h2>Live Resultaten (Huidige Vraag):</h2>
+        <div id="liveResults" class="live-results">
+            Antwoord A: <span id="countA">0</span><br>
+            Antwoord B: <span id="countB">0</span><br>
+            Antwoord C: <span id="countC">0</span><br>
+            Antwoord D: <span id="countD">0</span><br>
+            <hr style="margin: 10px 0;">
+            Totaal Antwoorden: <span id="totalCount">0</span> <br>
+            Juist: <span id="correctCount" class="correct">0</span> <br>
+            Fout: <span id="incorrectCount" class="incorrect">0</span>
+        </div>
+
+        <div class="controls-section">
+            <h2>Bediening:</h2>
+            <button id="prevQuestionBtn" disabled>Vorige Vraag</button>
+            <button id="nextQuestionBtn">Start Quiz</button>
+            <button id="resetQuizBtn">Reset Quiz</button>
+            <!-- NIEUWE KNOP -->
+            <button id="analyzeQuizBtn" class="hide">Toon Eindanalyse</button>
+        </div>
+
+        <!-- Scheidingslijn en Div voor Analyse Resultaten -->
+        <hr class="hide" id="analysis-separator">
+        <div id="analysisResults" class="hide">
+            <h2>Eindanalyse</h2>
+            <div id="analysis-summary">Laden...</div>
+            <h3 style="margin-top: 20px;">Meest Fout Beantwoorde Vragen:</h3>
+            <div id="analysis-incorrect-list">Laden...</div>
+        </div>
+        <!-- EINDE NIEUWE ELEMENTEN -->
+
+    </div> <!-- Einde container -->
+
+
+    <!-- =========== Firebase SDK Scripts =========== -->
+    <script type="module">
+      // Importeer de basis Firebase app functie
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      // Importeer de Firestore functie APART
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      // Jouw unieke Firebase configuratie
+      const firebaseConfig = {
+        apiKey: "AIzaSyAEDsSpOk5CSFHox7Q59IBUbx6XcRmmXDo",
+        authDomain: "diabetes-quiz.firebaseapp.com",
+        projectId: "diabetes-quiz",
+        storageBucket: "diabetes-quiz.appspot.com", // CONTROLEER DEZE WAARDE
+        messagingSenderId: "294763855066",
+        appId: "1:294763855066:web:b89433cbf262acdb63b9e3"
+      };
+
+      // Initialiseer de Firebase App
+      const app = initializeApp(firebaseConfig);
+      // Initialiseer Firestore
+      const db = getFirestore(app);
+      // Maak 'db' globaal beschikbaar
+      window.db = db; window.app = app;
+      console.log("Firebase app en Firestore DB geïnitialiseerd.");
+    </script>
+    <!-- ========================================== -->
+
+    <!-- ========= Eigen Scripts ========= -->
+    <script src="questions.js"></script>
+    <script type="module" src="master.js"></script>
+    <!-- =============================== -->
+	
+	    <!-- Footer -->
+    <footer>
+        <p>Auteur: Diabetes Liga Midden-Limburg</p>
+        <p class="social-links">
+            <a href="https://www.dlml.be" target="_blank">
+                <img src="Wereldbol.png" alt="Website" class="social-icon"> <!-- Controleer pad/naam -->
+                www.dlml.be
+            </a>
+            <a href="https://www.facebook.com/p/Diabetes-Liga-Midden-Limburg-100091325418693/?locale=nl_NL" target="_blank">
+                <img src="Facebook.png" alt="Facebook" class="social-icon"> <!-- Controleer pad/naam -->
+                Facebook
+            </a>
+            <a href="https://www.instagram.com/diabetes_liga_midden_limburg/" target="_blank">
+                <img src="Instagram.png" alt="Instagram" class="social-icon"> <!-- Controleer pad/naam -->
+                Instagram
+            </a>
+            <a href="https://www.youtube.com/@Diabetesligamiddenlimburg" target="_blank">
+                <img src="YouTube.png" alt="YouTube" class="social-icon"> <!-- Controleer pad/naam -->
+                YouTube
+            </a>
+        </p>
+        <!-- Bedankbericht voor master is niet nodig, maar kan geen kwaad -->
+        <p id="thank-you-msg" style="font-weight: bold; margin-top: 30px;"></p>
+    </footer>
+    <!-- Firebase/Eigen Scripts komen hierna -->
+	
+
+</body>
+</html>
