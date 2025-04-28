@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Quiz Demo</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: sans-serif;
+            background-color: #e9ecef; /* Lichte achtergrond */
+            overflow: hidden; /* Voorkom dubbele scrollbars */
+        }
+        .demo-container {
+            display: flex;
+            height: 100vh; /* Volledige viewpoort hoogte */
+            padding: 15px;
+            box-sizing: border-box;
+            gap: 15px; /* Ruimte tussen de frames */
+        }
+        .frame-container {
+            flex: 1; /* Geef beide frames evenveel ruimte */
+            display: flex;
+            flex-direction: column; /* Titel boven frame */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            overflow: hidden; /* Zorgt dat iframe binnen container blijft */
+        }
+        .frame-container h2 {
+            text-align: center;
+            padding: 10px 0;
+            margin: 0;
+            background-color: #007bff; /* Blauwe titelbalk */
+            color: white;
+            font-size: 1.2em;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        iframe {
+            flex-grow: 1; /* Laat iframe de resterende ruimte vullen */
+            width: 100%;
+            height: 100%; /* Hoogte wordt bepaald door flexbox */
+            border: none; /* Geen lelijke iframe rand */
+        }
+        /* Optioneel: Styling voor een timer */
+        #timer-display {
+             position: fixed; /* Of absolute binnen een container */
+             bottom: 20px;
+             left: 50%;
+             transform: translateX(-50%);
+             font-size: 1.8em;
+             font-weight: bold;
+             color: #fff;
+             background-color: rgba(0, 0, 0, 0.6);
+             padding: 5px 15px;
+             border-radius: 5px;
+             z-index: 100; /* Zorg dat het bovenop ligt */
+             display: none; /* Start verborgen */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="demo-container">
+        <div class="frame-container">
+            <h2>Quiz Master Control</h2>
+            <iframe src="master.html" title="Quiz Master Interface"></iframe>
+        </div>
+        <div class="frame-container">
+            <h2>Deelnemer Scherm (Voorbeeld)</h2>
+            <iframe src="deelnemer.html" title="Deelnemer Interface"></iframe>
+        </div>
+    </div>
+
+    <!-- Optionele Timer Display -->
+    <div id="timer-display">10</div>
+
+    <!-- Let op: Firebase SDK en andere scripts worden geladen BINNEN de iframes -->
+
+    <!-- Eventueel script HIER voor de timer logica -->
+    <script>
+      // Basis timer logica (kan later uitgebreid worden om te koppelen aan quiz state)
+      const timerDisplay = document.getElementById('timer-display');
+      let timerInterval = null;
+      let timeLeft = 10; // Starttijd
+
+      function startTimer() {
+        if (timerInterval) clearInterval(timerInterval); // Stop oude timer
+        timeLeft = 10; // Reset tijd
+        timerDisplay.textContent = timeLeft;
+        timerDisplay.style.display = 'block'; // Maak zichtbaar
+
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none'; // Verberg als tijd om is
+            // Hier zou je eventueel een actie kunnen triggeren
+            console.log("Tijd is om!");
+          }
+        }, 1000); // Elke seconde
+      }
+
+      function stopTimer() {
+           if (timerInterval) clearInterval(timerInterval);
+           timerDisplay.style.display = 'none';
+      }
+
+      // Voorbeeld: Koppel aan toetsenbord (alleen voor demo)
+      // document.addEventListener('keydown', (e) => {
+      //      if (e.key === 't') { // Druk 't' om timer te starten
+      //           startTimer();
+      //      }
+      //      if (e.key === 's') { // Druk 's' om te stoppen
+      //          stopTimer();
+      //      }
+      // });
+
+      // Belangrijk: In een echte implementatie zou de master.js via Firestore
+      // een signaal moeten geven wanneer de timer moet starten/stoppen,
+      // en deelnemer.js zou hierop moeten reageren.
+      // De timer hier is nu losgekoppeld van de quiz flow.
+
+    </script>
+
+</body>
+</html>
