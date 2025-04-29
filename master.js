@@ -194,12 +194,27 @@ async function handleAnalyzeQuiz() {
     }
 }
 
-function displayErrorAnalysis(results) { /* ... (Functie blijft hetzelfde als vorige keer) ... */
-     if (!analysisIncorrectListDiv) return; if (results.length === 0) { analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return; }
-     let html = '<ol style="padding-left: 20px;">';
-     results.forEach(item => { const percIncorrect = item.totalAnswers > 0 ? ((item.incorrectCount / item.totalAnswers) * 100).toFixed(0) : 0; html += `<li style="margin-bottom: 8px;">(${item.incorrectCount} fout / ${item.totalAnswers} totaal = ${percIncorrect}%)<br><strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText}</li>`; });
-     html += '</ol>'; analysisIncorrectListDiv.innerHTML = html;
- }
+function displayErrorAnalysis(results) {
+     if (!analysisIncorrectListDiv) return;
+     if (results.length === 0) {
+         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return;
+     }
+     let html = '<ol style="padding-left: 20px; list-style-position: outside;">'; // Zorg dat nummering buiten de lijn valt
+     results.forEach(item => {
+         const percIncorrect = item.totalAnswers > 0 ? ((item.incorrectCount / item.totalAnswers) * 100).toFixed(0) : 0;
+         // --- NIEUWE OPMAAK ---
+         html += `<li style="margin-bottom: 10px; line-height: 1.4;">
+                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span> <!-- Aantal fout, met 's' indien meer dan 1 -->
+                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span> <!-- Percentage kleiner ernaast -->
+                    <br> <!-- Nieuwe regel voor de vraagtekst -->
+                    <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText}
+                  </li>`;
+         // --- EINDE NIEUWE OPMAAK ---
+     });
+     html += '</ol>';
+     analysisIncorrectListDiv.innerHTML = html;
+}
+
 // --- EINDE Eind Analyse Functies ---
 
 
