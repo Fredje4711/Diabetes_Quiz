@@ -195,38 +195,53 @@ async function handleAnalyzeQuiz() {
 }
 
 function displayErrorAnalysis(results) {
-     if (!analysisIncorrectListDiv) return;
-
-     // --- Neem alleen de top 10 (of minder als er minder zijn) ---
-     const topN = 10;
-     const topResults = results.slice(0, topN);
-     // --- EINDE ---
-
-     if (topResults.length === 0) {
-         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return;
+     // Check of het div-element waar we in moeten schrijven wel bestaat
+     if (!analysisIncorrectListDiv) {
+          console.error("Element analysisIncorrectListDiv niet gevonden in displayErrorAnalysis!");
+          return;
      }
 
-     const listTitle = document.querySelector('#analysisResults h3');
-     if(listTitle) listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`;
+     // Neem alleen de top 10 (of minder als er minder resultaten zijn)
+     const topN = 10;
+     const topResults = results.slice(0, topN);
 
-     let html = '<ol style="padding-left: 20px; list-style-position: outside;">';
-     topResults.forEach(item => { // Loop door topResults
+     // Controleer of er überhaupt iets te tonen is na het filteren/slicen
+     if (topResults.length === 0) {
+         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord (die voldoen aan criteria)!</i></p>';
+         return;
+     }
+
+     // Pas eventueel de titel aan om het aantal getoonde items te reflecteren
+     const listTitle = document.querySelector('#analysisResults h3'); // Selecteer de H3 titel boven de lijst
+     if(listTitle) {
+          listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`;
+     }
+
+     // Bouw de HTML voor de genummerde lijst op
+     let html = '<ol style="padding-left: 20px; list-style-position: outside;">'; // Zorg dat nummers niet inspringen
+     topResults.forEach(item => {
+         // Bereken het percentage foute antwoorden voor deze specifieke vraag
          const percIncorrect = item.totalAnswers > 0 ? ((item.incorrectCount / item.totalAnswers) * 100).toFixed(0) : 0;
-         // --- OPMAAK MET "X deelnemer(s)" ---
-         html += `<li style="margin-bottom: 10px; line-height: 1.4;">
-                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span>
-                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span>
-                    <br>
-                    <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText}
-                  </li>`;
-          // --- EINDE OPMAAK ---
-     });
-     html += '</ol>';
 
-     // Optioneel: Toon hoeveel vragen er nog meer fout waren
+         // Voeg het lijst-item toe met de gewenste opmaak
+         html += `<li style="margin-bottom: 10px; line-height: 1.4;">
+                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span> <!-- Aantal deelnemers met 's' indien nodig -->
+                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span> <!-- Percentage ernaast -->
+                    <br> <!-- Nieuwe regel voor de vraag -->
+                    <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText} <!-- Vraagnummer en tekst -->
+                  </li>`;
+     });
+     html += '</ol>'; // Sluit de genummerde lijst
+
+     // Voeg eventueel een melding toe als er meer foute vragen waren dan getoond
      if (results.length > topN) {
           html += `<p style="font-size: 0.9em; text-align: center; margin-top: 15px;"><i>(... en ${results.length - topN} andere vragen met foute antwoorden)</i></p>`;
      }
+
+     // Plaats de gegenereerde HTML in de div
+     analysisIncorrectListDiv.innerHTML = html;
+     console.log("Foutenanalyse lijst HTML bijgewerkt."); // Log ter bevestiging
+}
 
      analysisIncorrectListDiv.innerHTML = html;
 }
