@@ -197,26 +197,29 @@ async function handleAnalyzeQuiz() {
 function displayErrorAnalysis(results) {
      if (!analysisIncorrectListDiv) return;
 
-     // --- NIEUW: Neem alleen de top 10 (of minder als er minder zijn) ---
+     // --- Neem alleen de top 10 (of minder als er minder zijn) ---
      const topN = 10;
      const topResults = results.slice(0, topN);
-     // --- EINDE NIEUW ---
+     // --- EINDE ---
 
-     if (topResults.length === 0) { // Check nu topResults
-         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord (of geen fouten voldeden aan eventuele criteria)!</i></p>'; return;
+     if (topResults.length === 0) {
+         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return;
      }
 
      const listTitle = document.querySelector('#analysisResults h3');
-     if(listTitle) listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`; // Titel aanpassen
+     if(listTitle) listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`;
 
      let html = '<ol style="padding-left: 20px; list-style-position: outside;">';
      topResults.forEach(item => { // Loop door topResults
          const percIncorrect = item.totalAnswers > 0 ? ((item.incorrectCount / item.totalAnswers) * 100).toFixed(0) : 0;
+         // --- OPMAAK MET "X deelnemer(s)" ---
          html += `<li style="margin-bottom: 10px; line-height: 1.4;">
-                    <span style="color: #dc3545; font-weight: bold;">${item.incorrectCount} Fout</span> / ${item.totalAnswers} Totaal (${percIncorrect}%)
+                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span>
+                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span>
                     <br>
                     <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText}
                   </li>`;
+          // --- EINDE OPMAAK ---
      });
      html += '</ol>';
 
@@ -227,7 +230,6 @@ function displayErrorAnalysis(results) {
 
      analysisIncorrectListDiv.innerHTML = html;
 }
-
 
 // --- EINDE Eind Analyse Functies ---
 
