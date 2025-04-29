@@ -11,7 +11,6 @@ let initialized = false; // Voorkom dubbele initialisatie/listeners
 
 // DOM Elementen (globaal voor toegang in functies)
 let currentQuestionIndexSpan, questionDisplayDiv, optionsDisplayDiv, liveResultsDiv, prevQuestionBtn, nextQuestionBtn, resetQuizBtn;
-// Nieuwe elementen voor analyse
 let analyzeQuizBtn, analysisResultsDiv, analysisSummaryDiv, analysisIncorrectListDiv, analysisSeparator;
 
 
@@ -46,19 +45,20 @@ async function handlePrevQuestion() {
     if (prevIndex >= -1) {
         try {
             console.log(`Naar vraag ${prevIndex}`);
-            await updateDoc(quizStateRef, { activeQuestionIndex: prevIndex, quizStatus: (prevIndex === -1) ? "not_started" : "active" });
+            await updateDoc(quizStateRef, {
+                activeQuestionIndex: prevIndex,
+                quizStatus: (prevIndex === -1) ? "not_started" : "active"
+            });
         } catch (error) { console.error("Fout vorige vraag:", error); alert("Fout: kon niet naar vorige."); }
     }
 }
-
-// --- Reset Functie (VERSIE DIE ANTWOORDEN NIET VERWIJDERT) ---
 
 // --- Reset Functie (MET ANTWOORDEN VERWIJDEREN) ---
 async function handleResetQuiz(confirmReset = true) {
      if (!db) { console.error("DB niet beschikbaar voor reset."); return; }
      const localQuizStateRef = quizStateRef || doc(db, "quizState", "currentState");
 
-    if (!confirmReset || confirm("Weet je zeker dat je de quiz wilt resetten? Alle antwoorden worden definitief verwijderd!")) { // Bevestigingstekst aangepast
+    if (!confirmReset || confirm("Weet je zeker dat je de quiz wilt resetten? Alle antwoorden worden definitief verwijderd!")) {
         try {
             console.log("Master: Resetting quiz...");
             if (unsubscribeAnswers) { unsubscribeAnswers(); unsubscribeAnswers = null; }
@@ -67,7 +67,6 @@ async function handleResetQuiz(confirmReset = true) {
             await setDoc(localQuizStateRef, { activeQuestionIndex: -1, quizStatus: "not_started" });
             console.log("quizState gereset.");
 
-            // --- START HERSTELDE CODE (Antwoorden WEL Verwijderen) ---
             // 2. Verwijder alle antwoord documenten NU WEL
              console.log("Verwijderen oude antwoorden...");
              const answersCollectionRef = collection(db, "answers");
@@ -78,7 +77,6 @@ async function handleResetQuiz(confirmReset = true) {
                  await batch.commit(); // Voer verwijderingen uit
                  console.log(`${querySnapshot.size} oude antwoorden verwijderd.`);
              } else { console.log("Geen oude antwoorden gevonden om te verwijderen."); }
-            // --- EINDE HERSTELDE CODE ---
 
              clearLiveResults(); // Wis live resultaten display
 
@@ -97,160 +95,71 @@ async function handleResetQuiz(confirmReset = true) {
              if (confirmReset) { alert("Quiz succesvol gereset! (Antwoorden ook verwijderd)"); }
 
         } catch (error) {
-            console.error("Fout bij resetten quiz:", error); // Log de error!
+            console.error("Fout bij resetten quiz:", error);
             if (confirmReset) { alert("Fout bij resetten: " + error.message); }
         }
     }
 }
 // --- EINDE Reset Functie ---
 
-// --- EINDE Reset Functie ---
-
+// --- Functies voor Eind Analyse ---
 async function handleAnalyzeQuiz() {
-    console.log("--- handleAnalyzeQuiz START ---"); // Duidelijke start log
-    // Basis checks
+    console.log("Starten eindanalyse...");
     if (!db || !initialized || !analyzeQuizBtn || !analysisResultsDiv || !analysisSummaryDiv || !analysisIncorrectListDiv) {
-         console.error("Analyse Start Fout: Elementen of DB missen."); return;
+         console.error("Kan analyse niet starten, elementen of DB missen."); return;
     }
-    // UI aanpassen voor laden
     analyzeQuizBtn.disabled = true; analyzeQuizBtn.textContent = "Analyseren...";
     analysisResultsDiv.classList.remove('hide');
-    analysisSummaryDiv.innerHTML = '<i>Antwoorden ophalen uit Firestore...</i>'; analysisIncorrectListDiv.innerHTML = '';
-    console.log("UI gezet op laden...");
+    analysisSummaryDiv.innerHTML = '<i>Antwoorden ophalen...</i>'; analysisIncorrectListDiv.innerHTML = '';
 
     let totalCorrect = 0; let totalIncorrect = 0; let totalAnswered = 0;
     const incorrectCountsPerQuestion = [];
 
     try {
-        console.log("Poging tot ophalen 'answers' collectie...");
         const answersCollectionRef = collection(db, "answers");
         const querySnapshot = await getDocs(answersCollectionRef);
-        console.log(`Snapshot ontvangen. Aantal documenten: ${querySnapshot.size}`); // Log aantal
+        if (querySnapshot.empty) { throw new Error("Geen antwoorddata gevonden."); }
 
-        if (querySnapshot.empty) {
-             console.log("Geen antwoorddata gevonden in Firestore.");
-             throw new Error("Geen antwoorddata gevonden om te analyseren.");
-        }
-
-        console.log("Start verwerken documenten...");
         querySnapshot.forEach((docSnap) => {
-            const questionIndex = parseInt(docSnap.id, 10);
-            const answerData = docSnap.data();
-             console.log(`Verwerk document ${docSnap.id}:`, answerData); // Log elk document
-
-            // Controleer of index een geldig getal is
-            if (isNaN(questionIndex)) {
-                 console.warn(`Ongeldige document ID gevonden in answers: ${docSnap.id}`);
-                 return; // Sla dit document over
-            }
-
-            const correct = answerData.correctCount || 0;
-            const incorrect = answerData.incorrectCount || 0;
-            const total = answerData.total || 0;
-
+            const questionIndex = parseInt(docSnap.id, 10); const answerData = docSnap.data(); const correct = answerData.correctCount || 0; const incorrect = answerData.incorrectCount || 0; const total = answerData.total || 0;
             totalCorrect += correct; totalIncorrect += incorrect; totalAnswered += total;
-
-            if (incorrect > 0) {
-                 let questionText = `Vraag ${questionIndex + 1} (tekst niet gevonden)`; // Default
-                 if (typeof quizData !== 'undefined' && quizData[questionIndex]) {
-                     questionText = quizData[questionIndex].question;
-                 } else {
-                      console.warn(`Vraagdata niet gevonden voor index ${questionIndex}`);
-                 }
-                 incorrectCountsPerQuestion.push({ questionIndex, questionText, incorrectCount: incorrect, totalAnswers: total });
-            }
+            if (incorrect > 0 && typeof quizData !== 'undefined' && quizData[questionIndex]) { incorrectCountsPerQuestion.push({ questionIndex, questionText: quizData[questionIndex].question, incorrectCount: incorrect, totalAnswers: total }); }
+            else if (incorrect > 0) { console.warn(`Vraagdata niet gevonden voor index ${questionIndex}`); incorrectCountsPerQuestion.push({ questionIndex, questionText: `Vraag ${questionIndex + 1}`, incorrectCount: incorrect, totalAnswers: total }); }
         });
-        console.log("Documenten verwerkt. Totaal beantwoord:", totalAnswered);
 
-        // Sorteren
         incorrectCountsPerQuestion.sort((a, b) => b.incorrectCount - a.incorrectCount);
-        console.log("Foutenlijst gesorteerd.");
-
-        // Percentages berekenen
-        const percentageCorrect = totalAnswered > 0 ? ((totalCorrect / totalAnswered) * 100).toFixed(1) : 0;
-        const percentageIncorrect = totalAnswered > 0 ? ((totalIncorrect / totalAnswered) * 100).toFixed(1) : 0;
-        console.log("Percentages berekend.");
-
-        // Samenvatting tonen
-        analysisSummaryDiv.innerHTML = `
-            Totaal aantal gegeven antwoorden: <strong>${totalAnswered}</strong><br>
-            Totaal Juist: <strong style="color: green;">${totalCorrect}</strong> (${percentageCorrect}%)<br>
-            Totaal Fout: <strong style="color: red;">${totalIncorrect}</strong> (${percentageIncorrect}%)
-        `;
-        console.log("Samenvatting getoond.");
-
-        // Foutenlijst tonen
-        displayErrorAnalysis(incorrectCountsPerQuestion);
-        console.log("Foutenlijst getoond via displayErrorAnalysis.");
-
-        analyzeQuizBtn.textContent = "Analyse Getoond"; // Klaar
-
-    } catch (error) {
-        console.error("!!! FOUT TIJDENS ANALYSE:", error); // Log de fout HIER
-        analysisSummaryDiv.innerHTML = `<p style="color: red;">Fout bij laden analyse: ${error.message}</p>`;
-        analysisIncorrectListDiv.innerHTML = '';
-        analyzeQuizBtn.textContent = "Analyse Mislukt";
-        analyzeQuizBtn.disabled = false; // Maak weer klikbaar
-    }
+        const percCorrect = totalAnswered > 0 ? ((totalCorrect / totalAnswered) * 100).toFixed(1) : 0;
+        const percIncorrect = totalAnswered > 0 ? ((totalIncorrect / totalAnswered) * 100).toFixed(1) : 0;
+        analysisSummaryDiv.innerHTML = `Totaal aantal gegeven antwoorden: <strong>${totalAnswered}</strong><br>Totaal Juist: <strong style="color: green;">${totalCorrect}</strong> (${percCorrect}%)<br>Totaal Fout: <strong style="color: red;">${totalIncorrect}</strong> (${percIncorrect}%)`;
+        displayErrorAnalysis(incorrectCountsPerQuestion); analyzeQuizBtn.textContent = "Analyse Getoond";
+    } catch (error) { console.error("Fout analyseren:", error); analysisSummaryDiv.innerHTML = `<p style="color: red;">Fout: ${error.message}</p>`; analysisIncorrectListDiv.innerHTML = ''; analyzeQuizBtn.textContent = "Analyse Mislukt"; analyzeQuizBtn.disabled = false; }
 }
 
+// --- Functie displayErrorAnalysis (MET "X deelnemer(s)" weergave) ---
 function displayErrorAnalysis(results) {
-     // Check of het div-element waar we in moeten schrijven wel bestaat
-     if (!analysisIncorrectListDiv) {
-          console.error("Element analysisIncorrectListDiv niet gevonden in displayErrorAnalysis!");
-          return;
-     }
-
-     // Neem alleen de top 10 (of minder als er minder resultaten zijn)
-     const topN = 10;
-     const topResults = results.slice(0, topN);
-
-     // Controleer of er überhaupt iets te tonen is na het filteren/slicen
-     if (topResults.length === 0) {
-         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord (die voldoen aan criteria)!</i></p>';
-         return;
-     }
-
-     // Pas eventueel de titel aan om het aantal getoonde items te reflecteren
-     const listTitle = document.querySelector('#analysisResults h3'); // Selecteer de H3 titel boven de lijst
-     if(listTitle) {
-          listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`;
-     }
-
-     // Bouw de HTML voor de genummerde lijst op
-     let html = '<ol style="padding-left: 20px; list-style-position: outside;">'; // Zorg dat nummers niet inspringen
+     if (!analysisIncorrectListDiv) return;
+     const topN = 10; const topResults = results.slice(0, topN);
+     if (topResults.length === 0) { analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return; }
+     const listTitle = document.querySelector('#analysisResults h3'); if(listTitle) listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`;
+     let html = '<ol style="padding-left: 20px; list-style-position: outside;">';
      topResults.forEach(item => {
-         // Bereken het percentage foute antwoorden voor deze specifieke vraag
          const percIncorrect = item.totalAnswers > 0 ? ((item.incorrectCount / item.totalAnswers) * 100).toFixed(0) : 0;
-
-         // Voeg het lijst-item toe met de gewenste opmaak
          html += `<li style="margin-bottom: 10px; line-height: 1.4;">
-                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span> <!-- Aantal deelnemers met 's' indien nodig -->
-                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span> <!-- Percentage ernaast -->
-                    <br> <!-- Nieuwe regel voor de vraag -->
-                    <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText} <!-- Vraagnummer en tekst -->
+                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span>
+                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span>
+                    <br>
+                    <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText}
                   </li>`;
      });
-     html += '</ol>'; // Sluit de genummerde lijst
-
-     // Voeg eventueel een melding toe als er meer foute vragen waren dan getoond
-     if (results.length > topN) {
-          html += `<p style="font-size: 0.9em; text-align: center; margin-top: 15px;"><i>(... en ${results.length - topN} andere vragen met foute antwoorden)</i></p>`;
-     }
-
-     // Plaats de gegenereerde HTML in de div
+     html += '</ol>';
+     if (results.length > topN) { html += `<p style="font-size: 0.9em; text-align: center; margin-top: 15px;"><i>(... en ${results.length - topN} andere vragen met foute antwoorden)</i></p>`; }
      analysisIncorrectListDiv.innerHTML = html;
-     console.log("Foutenanalyse lijst HTML bijgewerkt."); // Log ter bevestiging
+     console.log("Foutenanalyse lijst HTML bijgewerkt.");
 }
-
-     analysisIncorrectListDiv.innerHTML = html;
-}
-
 // --- EINDE Eind Analyse Functies ---
 
-
 // --- Functie om UI bij te werken ---
-function updateMasterUI() { /* ... (Functie blijft hetzelfde als vorige keer, met de correctie voor nextButton.disabled) ... */
+function updateMasterUI() { /* ... (Deze functie blijft hetzelfde als de vorige versie, met de correcte knop-disable logica) ... */
     if (!initialized) return; console.log("updateMasterUI met state:", currentQuizState);
     if (!currentQuestionIndexSpan || !questionDisplayDiv || !optionsDisplayDiv || !prevQuestionBtn || !nextQuestionBtn || !analyzeQuizBtn || !analysisSeparator || !analysisResultsDiv) { console.error("UI elementen missen!"); return; }
     const activeIndex = currentQuizState.activeQuestionIndex; const status = currentQuizState.quizStatus;
@@ -265,8 +174,8 @@ function updateMasterUI() { /* ... (Functie blijft hetzelfde als vorige keer, me
     if (status === 'finished') { analyzeQuizBtn.classList.remove('hide'); analysisSeparator.classList.remove('hide'); } else { analyzeQuizBtn.classList.add('hide'); analysisResultsDiv.classList.add('hide'); analysisSeparator.classList.add('hide'); }
 }
 
-// --- Functies Live Resultaten ---
-function listenToAnswers(questionIndex) { /* ... (ongewijzigd) ... */ if (!db) return; if (unsubscribeAnswers) { unsubscribeAnswers(); unsubscribeAnswers = null; } clearLiveResults(); const answerDocRef = doc(db, "answers", String(questionIndex)); console.log(`Master: Luisteren V.${questionIndex}`); unsubscribeAnswers = onSnapshot(answerDocRef, (docSnap) => { if (docSnap.exists()) { updateLiveResults(docSnap.data()); } else { clearLiveResults(); } }, (error) => { console.error(`Fout luisteren V.${questionIndex}:`, error); }); }
+// --- Functies voor Live Resultaten ---
+function listenToAnswers(questionIndex) { /* ... (ongewijzigd) ... */ if (!db) return; if (unsubscribeAnswers) { unsubscribeAnswers(); unsubscribeAnswers = null; } clearLiveResults(); const answerDocRef = doc(db, "answers", String(questionIndex)); console.log(`Master: Luisteren V.${questionIndex}`); unsubscribeAnswers = onSnapshot(answerDocRef, (docSnap) => { if (docSnap.exists()) { updateLiveResults(docSnap.data()); } else { clearLiveResults(); } }, (error) => { console.error(`Master: Fout luisteren V.${questionIndex}:`, error); }); }
 function updateLiveResults(data) { /* ... (ongewijzigd) ... */ if (!initialized) return; document.getElementById('countA').textContent = data.A || 0; document.getElementById('countB').textContent = data.B || 0; document.getElementById('countC').textContent = data.C || 0; document.getElementById('countD').textContent = data.D || 0; document.getElementById('totalCount').textContent = data.total || 0; document.getElementById('correctCount').textContent = data.correctCount || 0; document.getElementById('incorrectCount').textContent = data.incorrectCount || 0; }
 function clearLiveResults() { /* ... (ongewijzigd) ... */ if (!initialized) return; document.getElementById('countA').textContent = 0; document.getElementById('countB').textContent = 0; document.getElementById('countC').textContent = 0; document.getElementById('countD').textContent = 0; document.getElementById('totalCount').textContent = 0; document.getElementById('correctCount').textContent = 0; document.getElementById('incorrectCount').textContent = 0; }
 
@@ -274,7 +183,7 @@ function clearLiveResults() { /* ... (ongewijzigd) ... */ if (!initialized) retu
 function startListeningToQuizState() { /* ... (ongewijzigd) ... */ if (!db) { console.error("DB niet beschikbaar."); return;} quizStateRef = doc(db, "quizState", "currentState"); onSnapshot(quizStateRef, (docSnap) => { if (docSnap.exists()) { currentQuizState = docSnap.data(); console.log("Master: State update:", currentQuizState); } else { console.log("Master: Geen state doc! Resetting."); currentQuizState = { activeQuestionIndex: -1, quizStatus: "not_started" }; handleResetQuiz(false); } if(initialized) { updateMasterUI(); } }, (error) => { console.error("Master: Fout luisteren state:", error); questionDisplayDiv.textContent = "Fout status."; currentQuizState = { activeQuestionIndex: -1, quizStatus: "error" }; if(initialized) { updateMasterUI(); } }); }
 
 // --- Initialisatie functie ---
-function initializeMaster() { /* ... (ongewijzigd) ... */ console.log("Master DOM geladen."); currentQuestionIndexSpan = document.getElementById('currentQuestionIndex'); questionDisplayDiv = document.getElementById('questionDisplay'); optionsDisplayDiv = document.getElementById('optionsDisplay'); liveResultsDiv = document.getElementById('liveResults'); prevQuestionBtn = document.getElementById('prevQuestionBtn'); nextQuestionBtn = document.getElementById('nextQuestionBtn'); resetQuizBtn = document.getElementById('resetQuizBtn'); analyzeQuizBtn = document.getElementById('analyzeQuizBtn'); analysisResultsDiv = document.getElementById('analysisResults'); analysisSummaryDiv = document.getElementById('analysis-summary'); analysisIncorrectListDiv = document.getElementById('analysis-incorrect-list'); analysisSeparator = document.getElementById('analysis-separator'); if (nextQuestionBtn) { nextQuestionBtn.addEventListener('click', handleNextQuestion); } else { console.error("Knop nextQuestionBtn niet gevonden!"); } if (prevQuestionBtn) { prevQuestionBtn.addEventListener('click', handlePrevQuestion); } else { console.error("Knop prevQuestionBtn niet gevonden!"); } if (resetQuizBtn) { resetQuizBtn.addEventListener('click', handleResetQuiz); } else { console.error("Knop resetQuizBtn niet gevonden!"); } if (analyzeQuizBtn) { analyzeQuizBtn.addEventListener('click', handleAnalyzeQuiz); } else { console.error("Knop analyzeQuizBtn niet gevonden!"); } if (typeof quizData === 'undefined' || !Array.isArray(quizData) || quizData.length === 0) { console.error("quizData niet beschikbaar!"); if(questionDisplayDiv) questionDisplayDiv.textContent = "Fout: Vragenlijst."; return; } totalQuestions = quizData.length; console.log(`Master: ${totalQuestions} vragen geladen.`); function connectToFirestore() { if (typeof window.db !== 'undefined') { db = window.db; console.log("Firestore DB ref gevonden."); initialized = true; startListeningToQuizState(); } else { console.log("Wachten op Firebase init..."); setTimeout(connectToFirestore, 500); } } connectToFirestore(); }
+function initializeMaster() { /* ... (ongewijzigd) ... */ console.log("Master DOM geladen."); currentQuestionIndexSpan = document.getElementById('currentQuestionIndex'); questionDisplayDiv = document.getElementById('questionDisplay'); optionsDisplayDiv = document.getElementById('optionsDisplay'); liveResultsDiv = document.getElementById('liveResults'); prevQuestionBtn = document.getElementById('prevQuestionBtn'); nextQuestionBtn = document.getElementById('nextQuestionBtn'); resetQuizBtn = document.getElementById('resetQuizBtn'); analyzeQuizBtn = document.getElementById('analyzeQuizBtn'); analysisResultsDiv = document.getElementById('analysisResults'); analysisSummaryDiv = document.getElementById('analysis-summary'); analysisIncorrectListDiv = document.getElementById('analysis-incorrect-list'); analysisSeparator = document.getElementById('analysis-separator'); if (nextQuestionBtn) { nextQuestionBtn.addEventListener('click', handleNextQuestion); } else { console.error("Knop nextQuestionBtn niet gevonden!"); } if (prevQuestionBtn) { prevQuestionBtn.addEventListener('click', handlePrevQuestion); } else { console.error("Knop prevQuestionBtn niet gevonden!"); } if (resetQuizBtn) { resetQuizBtn.addEventListener('click', handleResetQuiz); } else { console.error("Knop resetQuizBtn niet gevonden!"); } if (analyzeQuizBtn) { analyzeQuizBtn.addEventListener('click', handleAnalyzeQuiz); } else { console.error("Knop analyzeQuizBtn niet gevonden!"); } if (typeof quizData === 'undefined' || !Array.isArray(quizData) || quizData.length === 0) { console.error("quizData is niet beschikbaar!"); if(questionDisplayDiv) questionDisplayDiv.textContent = "Fout: Vragenlijst."; return; } totalQuestions = quizData.length; console.log(`Master: ${totalQuestions} vragen geladen.`); function connectToFirestore() { if (typeof window.db !== 'undefined') { db = window.db; console.log("Firestore DB ref gevonden."); initialized = true; startListeningToQuizState(); } else { console.log("Wachten op Firebase init..."); setTimeout(connectToFirestore, 500); } } connectToFirestore(); }
 
 // --- Wacht tot DOM geladen is en start dan initialisatie ---
 document.addEventListener('DOMContentLoaded', initializeMaster);
