@@ -196,24 +196,38 @@ async function handleAnalyzeQuiz() {
 
 function displayErrorAnalysis(results) {
      if (!analysisIncorrectListDiv) return;
-     if (results.length === 0) {
-         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return;
+
+     // --- NIEUW: Neem alleen de top 10 (of minder als er minder zijn) ---
+     const topN = 10;
+     const topResults = results.slice(0, topN);
+     // --- EINDE NIEUW ---
+
+     if (topResults.length === 0) { // Check nu topResults
+         analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord (of geen fouten voldeden aan eventuele criteria)!</i></p>'; return;
      }
-     let html = '<ol style="padding-left: 20px; list-style-position: outside;">'; // Zorg dat nummering buiten de lijn valt
-     results.forEach(item => {
+
+     const listTitle = document.querySelector('#analysisResults h3');
+     if(listTitle) listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`; // Titel aanpassen
+
+     let html = '<ol style="padding-left: 20px; list-style-position: outside;">';
+     topResults.forEach(item => { // Loop door topResults
          const percIncorrect = item.totalAnswers > 0 ? ((item.incorrectCount / item.totalAnswers) * 100).toFixed(0) : 0;
-         // --- NIEUWE OPMAAK ---
          html += `<li style="margin-bottom: 10px; line-height: 1.4;">
-                    <span style="font-weight: bold; font-size: 1.1em; color: #dc3545;">${item.incorrectCount} deelnemer${item.incorrectCount !== 1 ? 's' : ''}</span> <!-- Aantal fout, met 's' indien meer dan 1 -->
-                    <span style="font-size: 0.9em; color: #6c757d;">(${percIncorrect}%)</span> <!-- Percentage kleiner ernaast -->
-                    <br> <!-- Nieuwe regel voor de vraagtekst -->
+                    <span style="color: #dc3545; font-weight: bold;">${item.incorrectCount} Fout</span> / ${item.totalAnswers} Totaal (${percIncorrect}%)
+                    <br>
                     <strong>Vraag ${item.questionIndex + 1}:</strong> ${item.questionText}
                   </li>`;
-         // --- EINDE NIEUWE OPMAAK ---
      });
      html += '</ol>';
+
+     // Optioneel: Toon hoeveel vragen er nog meer fout waren
+     if (results.length > topN) {
+          html += `<p style="font-size: 0.9em; text-align: center; margin-top: 15px;"><i>(... en ${results.length - topN} andere vragen met foute antwoorden)</i></p>`;
+     }
+
      analysisIncorrectListDiv.innerHTML = html;
 }
+
 
 // --- EINDE Eind Analyse Functies ---
 
