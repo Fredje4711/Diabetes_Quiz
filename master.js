@@ -103,7 +103,7 @@ async function handleResetQuiz(confirmReset = true) {
 }
 // --- EINDE Reset Functie ---
 
-async function handleAnalyzeQuiz() { /* ... (Functie blijft hetzelfde als vorige keer) ... */
+async function handleAnalyzeQuiz() { /* ... (Functie blijft hetzelfde) ... */
     console.log("Starten eindanalyse..."); if (!db || !initialized || !analyzeQuizBtn) { return; }
     analyzeQuizBtn.disabled = true; analyzeQuizBtn.textContent = "Analyseren...";
     analysisResultsDiv.classList.remove('hide'); analysisSummaryDiv.innerHTML = '<i>Antwoorden ophalen...</i>'; analysisIncorrectListDiv.innerHTML = '';
@@ -124,7 +124,7 @@ async function handleAnalyzeQuiz() { /* ... (Functie blijft hetzelfde als vorige
     } catch (error) { console.error("Fout analyseren:", error); analysisSummaryDiv.innerHTML = `<p style="color: red;">Fout: ${error.message}</p>`; analysisIncorrectListDiv.innerHTML = ''; analyzeQuizBtn.textContent = "Analyse Mislukt"; analyzeQuizBtn.disabled = false; }
  }
 
-function displayErrorAnalysis(results) { /* ... (Functie blijft hetzelfde als vorige keer met "X deelnemer(s)") ... */
+function displayErrorAnalysis(results) { /* ... (Functie blijft hetzelfde met "X deelnemer(s)") ... */
      if (!analysisIncorrectListDiv) return; const topN = 10; const topResults = results.slice(0, topN);
      if (topResults.length === 0) { analysisIncorrectListDiv.innerHTML = '<p><i>Geen vragen fout beantwoord!</i></p>'; return; }
      const listTitle = document.querySelector('#analysisResults h3'); if(listTitle) listTitle.textContent = `Top ${topResults.length} Meest Fout Beantwoorde Vragen:`;
@@ -137,7 +137,7 @@ function displayErrorAnalysis(results) { /* ... (Functie blijft hetzelfde als vo
 
 
 // --- Functie om UI bij te werken ---
-function updateMasterUI() { /* ... (Functie blijft hetzelfde als vorige keer, met de correcte knop-disable logica) ... */
+function updateMasterUI() { /* ... (Functie blijft hetzelfde) ... */
     if (!initialized) return; console.log("updateMasterUI met state:", currentQuizState);
     if (!currentQuestionIndexSpan || !questionDisplayDiv || !optionsDisplayDiv || !prevQuestionBtn || !nextQuestionBtn || !analyzeQuizBtn || !analysisSeparator || !analysisResultsDiv) { console.error("UI elementen missen!"); return; }
     const activeIndex = currentQuizState.activeQuestionIndex; const status = currentQuizState.quizStatus;
@@ -157,19 +157,18 @@ function listenToAnswers(questionIndex) { /* ... (ongewijzigd) ... */ if (!db) r
 function updateLiveResults(data) { /* ... (ongewijzigd) ... */ if (!initialized) return; document.getElementById('countA').textContent = data.A || 0; document.getElementById('countB').textContent = data.B || 0; document.getElementById('countC').textContent = data.C || 0; document.getElementById('countD').textContent = data.D || 0; document.getElementById('totalCount').textContent = data.total || 0; document.getElementById('correctCount').textContent = data.correctCount || 0; document.getElementById('incorrectCount').textContent = data.incorrectCount || 0; }
 function clearLiveResults() { /* ... (ongewijzigd) ... */ if (!initialized) return; document.getElementById('countA').textContent = 0; document.getElementById('countB').textContent = 0; document.getElementById('countC').textContent = 0; document.getElementById('countD').textContent = 0; document.getElementById('totalCount').textContent = 0; document.getElementById('correctCount').textContent = 0; document.getElementById('incorrectCount').textContent = 0; }
 
-
 // --- Functie om te luisteren naar quizState ---
 function startListeningToQuizState() { /* ... (ongewijzigd) ... */ if (!db) { console.error("DB niet beschikbaar."); return;} quizStateRef = doc(db, "quizState", "currentState"); onSnapshot(quizStateRef, (docSnap) => { if (docSnap.exists()) { currentQuizState = docSnap.data(); console.log("Master: State update:", currentQuizState); } else { console.log("Master: Geen state doc! Resetting."); currentQuizState = { activeQuestionIndex: -1, quizStatus: "not_started" }; handleResetQuiz(false); } if(initialized) { updateMasterUI(); } }, (error) => { console.error("Master: Fout luisteren state:", error); questionDisplayDiv.textContent = "Fout status."; currentQuizState = { activeQuestionIndex: -1, quizStatus: "error" }; if(initialized) { updateMasterUI(); } }); }
 
-// --- Initialisatie functie ---
+// --- Initialisatie functie (MET WACHTWOORD CHECK) ---
 function initializeMaster() {
     console.log("Master DOM geladen, start initialisatie.");
 
-    // --- START Simpele Wachtwoord Check ---
+    /* // --- START Simpele Wachtwoord Check (TIJDELIJK UITGESCHAKELD VOOR DEMO) ---
     const correctMasterPassword = "DiabetesQuiz2025!"; // <<< VERANDER DIT WACHTWOORD!
     let enteredPassword = null;
     let attempts = 0;
-    const maxAttempts = 3; // Maximaal 3 pogingen
+    const maxAttempts = 3;
 
     while (enteredPassword !== correctMasterPassword && attempts < maxAttempts) {
         attempts++;
@@ -187,7 +186,7 @@ function initializeMaster() {
         return; // Stop de initialisatie
     }
     console.log("Wachtwoord correct, initialisatie gaat verder.");
-    // --- EINDE Simpele Wachtwoord Check ---
+    // --- EINDE Simpele Wachtwoord Check --- */
 
 
     // Selecteer DOM elementen
